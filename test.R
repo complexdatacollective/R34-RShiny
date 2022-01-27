@@ -1,7 +1,13 @@
-#test to see what needs to be done to data file to display
+#Test file
 
+#install dependencies
+install.packages("igraph")
+install.packages("xml2")
 
+#load libraries
 library(igraph)
+library(xml2)
+
 test <- igraph::read_graph("test.graphml", format = "graphml")
 test
 plot(test)
@@ -17,6 +23,7 @@ test$condoms_oral
 
 #parse alter variables
 
-library(xml2)
 parse.graphml("test.graphml", format = c("standard", "internal"), 
               nodes = c(), use.names = TRUE)
+
+

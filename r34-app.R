@@ -1,3 +1,11 @@
+#App to display Partner Services data collected in Network Canvas
+
+#install dependencies
+install.packages("shiny")
+
+#load libraries
+library(shiny)
+
 #UI
 ui <- fluidPage(
   
