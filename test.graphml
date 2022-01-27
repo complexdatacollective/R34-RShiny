@@ -1,0 +1,361 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <graphml
+    xmlns="http://graphml.graphdrawing.org/xmlns"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+    http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"
+    xmlns:nc="http://schema.networkcanvas.com/xmlns">
+<key id="f480c857-21e8-4d6e-9598-7fc0c6f20028" attr.name="last_sex_overall" attr.type="string" for="graph"/>
+<key id="4825efa0-dcce-4a31-bf41-a4ee8430a5ff" attr.name="role_self" attr.type="string" for="graph"/>
+<key id="7f9350b7-b9f7-46d7-bedf-adb5f7c1150f" attr.name="venue_overall" attr.type="string" for="graph"/>
+<key id="8c35429e-822a-4314-98d9-bb3e240af2f5" attr.name="who_infected" attr.type="string" for="graph"/>
+<key id="b448ae37-190d-464a-b496-895b8fd2a95c" attr.name="condoms_anal_receptive" attr.type="string" for="graph"/>
+<key id="6d695bbf-bcc5-4f5a-8320-69206c853625" attr.name="condoms_oral" attr.type="string" for="graph"/>
+<key id="59cec1f4-37db-4e64-ab53-45deb434e8c3" attr.name="condoms_oral_receptive" attr.type="string" for="graph"/>
+<key id="cb0c37ac-6ba6-4aae-9bd8-e323c8ae4eb9" attr.name="condoms_vaginal" attr.type="string" for="graph"/>
+<key id="ef2c4714-ac2d-4e11-b8cd-806004d651ff" attr.name="condoms_anal_insertive" attr.type="string" for="graph"/>
+<key id="197803c4-1a51-4ac7-a064-6d2922760df5_4b8cfc115af495125c084f26210ab91158f1ed34" attr.name="sex_type_anal" attr.type="boolean" for="graph"/>
+<key id="197803c4-1a51-4ac7-a064-6d2922760df5_8eebf141217127d04309dcf87a72166a9a485f9e" attr.name="sex_type_vaginal" attr.type="boolean" for="graph"/>
+<key id="197803c4-1a51-4ac7-a064-6d2922760df5_1a1fd23792b692d995174e07c0f07d91794507a2" attr.name="sex_type_oral" attr.type="boolean" for="graph"/>
+<key id="3c323bf7-2b6a-4636-8021-6968d5071bcc_0f5f632b7b40b07515a21723e3f13437d15a92f1" attr.name="sex_partner_gender_general_cis_men" attr.type="boolean" for="graph"/>
+<key id="3c323bf7-2b6a-4636-8021-6968d5071bcc_309c9808228395e212d2ca30f9b31fb4de1a1dc7" attr.name="sex_partner_gender_general_cis_women" attr.type="boolean" for="graph"/>
+<key id="3c323bf7-2b6a-4636-8021-6968d5071bcc_3a6886571b563d00d9bd3cbb2f2fba8d6954e1ef" attr.name="sex_partner_gender_general_trans_men" attr.type="boolean" for="graph"/>
+<key id="3c323bf7-2b6a-4636-8021-6968d5071bcc_1b4cd3b8d8bfbe7381aa3df187a7fd1bbc8759d2" attr.name="sex_partner_gender_general_trans_women" attr.type="boolean" for="graph"/>
+<key id="3c323bf7-2b6a-4636-8021-6968d5071bcc_df0ff92025ef3ab6261d64a25c1a7a539f70a023" attr.name="sex_partner_gender_general_not_listed" attr.type="boolean" for="graph"/>
+<key id="7579d671-2466-4c0f-b37a-28f923576cae" attr.name="outside_IL" attr.type="boolean" for="graph"/>
+<key id="c4228130-7d8b-46de-8d4e-1a768be97c81" attr.name="captured_all" attr.type="boolean" for="graph"/>
+<key id="ba0006e3-abd1-4e73-b548-d92286d6e234" attr.name="n_cis_female" attr.type="string" for="graph"/>
+<key id="ddb7a35e-dcef-444d-b15e-d615b681414f" attr.name="n_partners" attr.type="string" for="graph"/>
+<key id="9a0b9daa-6c99-41ad-aa02-2ce6414a987d" attr.name="n_cis_male" attr.type="string" for="graph"/>
+<key id="b3261625-d178-4871-b013-385053eacb47" attr.name="n_trans_women" attr.type="string" for="graph"/>
+<key id="a6f867a6-9645-48a8-9809-a595dafc822d" attr.name="n_trans_men" attr.type="string" for="graph"/>
+<key id="f8c586a7-9fe9-4081-8f75-68f2fa340cb3" attr.name="n_other_gender" attr.type="string" for="graph"/>
+<key id="label" attr.name="label" attr.type="string" for="all"/>
+<key id="networkCanvasType" attr.name="networkCanvasType" attr.type="string" for="all"/>
+<key id="networkCanvasUUID" attr.name="networkCanvasUUID" attr.type="string" for="all"/>
+<key id="423304c1-f96b-423d-bd67-0fff91d1ecde" attr.name="name" attr.type="string" for="node"/>
+<key id="8743b61a-8e8f-4a62-bbf7-3e2bd82a36c9" attr.name="sex_partner" attr.type="boolean" for="node"/>
+<key id="067f6f4d-4c0a-4e8e-b8f8-0676c495eba5" attr.name="phone" attr.type="string" for="node"/>
+<key id="299fc154-3cea-4a8e-a0e7-4c22efc0ac96" attr.name="age" attr.type="int" for="node"/>
+<key id="2ac82073-3edb-4fe2-bb3d-28d86552a828" attr.name="weight" attr.type="string" for="node"/>
+<key id="3ebe5ce3-ec5d-4e60-a0be-c9cdfab1ef18" attr.name="height" attr.type="string" for="node"/>
+<key id="22f198ae-96da-4aec-96c7-d14a00330c8b_528cef87d0bfb947548ab94679d1e5765f19089a" attr.name="race_white" attr.type="boolean" for="node"/>
+<key id="22f198ae-96da-4aec-96c7-d14a00330c8b_466bc8cef3e71de796ec483e212724a2c2044c68" attr.name="race_black" attr.type="boolean" for="node"/>
+<key id="22f198ae-96da-4aec-96c7-d14a00330c8b_50696dbfb6619de36774115f2378ad6e4491dd26" attr.name="race_asian" attr.type="boolean" for="node"/>
+<key id="22f198ae-96da-4aec-96c7-d14a00330c8b_df2a49d7833bf5b7ad476167945a5a5bab708aff" attr.name="race_hisp" attr.type="boolean" for="node"/>
+<key id="3d51cc1b-e3fa-482c-9a6a-34438c5a5680" attr.name="hair" attr.type="string" for="node"/>
+<key id="9bb7b859-526e-44fe-9394-d10b8120ce75" attr.name="first_sex" attr.type="string" for="node"/>
+<key id="c01e9fae-9d82-41e0-b917-3687084128d1" attr.name="last_sex" attr.type="string" for="node"/>
+<key id="d4fd451d-9066-4256-b81a-b0f4f01047bd" attr.name="num_times" attr.type="int" for="node"/>
+<key id="2aa50d8e-c691-4bd7-ba42-3d480acb6149" attr.name="role" attr.type="string" for="node"/>
+<key id="703fba04-3433-4b1c-b5a8-98040161cb3d_af2f144398b702bfe81a620e2dc31d9d5ff8cff3" attr.name="gender_cis_male" attr.type="boolean" for="node"/>
+<key id="703fba04-3433-4b1c-b5a8-98040161cb3d_8f10e3b6bcd06327c9a18aa9d7c6c029f97cc774" attr.name="gender_cis_female" attr.type="boolean" for="node"/>
+<key id="703fba04-3433-4b1c-b5a8-98040161cb3d_9368fedf01ad14ca83beaba813b430109f02c4b5" attr.name="gender_trans_male" attr.type="boolean" for="node"/>
+<key id="703fba04-3433-4b1c-b5a8-98040161cb3d_9396c631b2e219fa8156dd623c4a887091798fc0" attr.name="gender_trans_female" attr.type="boolean" for="node"/>
+<key id="77776c19-12fc-4daf-9ddd-b300a5132c1c" attr.name="gender_other" attr.type="string" for="node"/>
+<key id="41956f2e-2025-44e4-92f1-de194bf2105d_fb360f9c09ac8c5edb2f18be5de4e80ea4c430d0" attr.name="pregnant_yes" attr.type="boolean" for="node"/>
+<key id="41956f2e-2025-44e4-92f1-de194bf2105d_fd1286353570c5703799ba76999323b7c7447b06" attr.name="pregnant_no" attr.type="boolean" for="node"/>
+<key id="6e67e5c4-5499-4b22-a65c-58a7ec361939_5f51efbecdb644c4ea8a109f81947c1490d5ba62" attr.name="partner_type_regular" attr.type="boolean" for="node"/>
+<key id="6e67e5c4-5499-4b22-a65c-58a7ec361939_0cfd031077edccac57011036afa9b39a374c8251" attr.name="partner_type_fwb" attr.type="boolean" for="node"/>
+<key id="6e67e5c4-5499-4b22-a65c-58a7ec361939_61518fb1715ab4d698aca32a7840ac7b2e507d3e" attr.name="partner_type_anon" attr.type="boolean" for="node"/>
+<key id="8d422c6a-5c8d-4608-84e2-9c7b6a29f009" attr.name="partner_type_other" attr.type="string" for="node"/>
+<key id="b8e2ec7c-98fa-43c9-8165-6986e364e938_4d0fb475b242228032cbdf6d53924d2538df037b" attr.name="venue_met_internet" attr.type="boolean" for="node"/>
+<key id="b8e2ec7c-98fa-43c9-8165-6986e364e938_62cdb7020ff920e5aa642c3d4066950dd1f01f4d" attr.name="venue_met_bar" attr.type="boolean" for="node"/>
+<key id="b8e2ec7c-98fa-43c9-8165-6986e364e938_b483b668ed18bcf5a87b9b1c44e809b058881bae" attr.name="venue_met_bath" attr.type="boolean" for="node"/>
+<key id="448174cf-6df8-45b9-bad1-c9fa7b274b76" attr.name="venue_met_other" attr.type="string" for="node"/>
+<key id="ffdc764c-6274-448a-a93c-733da777072e_fb360f9c09ac8c5edb2f18be5de4e80ea4c430d0" attr.name="condoms_yes" attr.type="boolean" for="node"/>
+<key id="ffdc764c-6274-448a-a93c-733da777072e_297f31f02b99ab3fd2219c31def8a1392a5f35b7" attr.name="condoms_sometimes" attr.type="boolean" for="node"/>
+<key id="ffdc764c-6274-448a-a93c-733da777072e_fd1286353570c5703799ba76999323b7c7447b06" attr.name="condoms_no" attr.type="boolean" for="node"/>
+<key id="c3215595-1e0e-4968-bd4f-bbeccda02c5a_X" attr.name="layout_X" attr.type="double" for="node"/>
+<key id="c3215595-1e0e-4968-bd4f-bbeccda02c5a_Y" attr.name="layout_Y" attr.type="double" for="node"/>
+<key id="7aa05207-0eb5-4603-9f36-e9c5f865c0c2" attr.name="benefit_from_test" attr.type="boolean" for="node"/>
+<key id="f3fd019d-8bdf-4d01-9cad-f1a3de0e13b0" attr.name="first_name" attr.type="string" for="node"/>
+<key id="721511d6-7911-440e-bf27-53cee4b9a242" attr.name="last_name" attr.type="string" for="node"/>
+<key id="b47a09db-b701-4437-8346-3ee11b1bfbd6" attr.name="descrip_other" attr.type="string" for="node"/>
+<key id="137ee9ad-ccc4-4274-862f-ee42109b21e3" attr.name="preferred_name" attr.type="string" for="node"/>
+<key id="226658c9-61ee-4ef7-abd4-486db617ce64_95cb0bfd2977c761298d9624e4b4d4c72a39974a" attr.name="outside_IL_y" attr.type="boolean" for="node"/>
+<key id="226658c9-61ee-4ef7-abd4-486db617ce64_d1854cae891ec7b29161ccaf79a24b00c274bdaa" attr.name="outside_IL_n" attr.type="boolean" for="node"/>
+<key id="0143152d-1550-4c7e-8455-88108491e79f_356a192b7913b04c54574d18c28d46e6395428ab" attr.name="bar_specific_1" attr.type="boolean" for="node"/>
+<key id="0143152d-1550-4c7e-8455-88108491e79f_da4b9237bacccdf19c0760cab7aec4a8359010b0" attr.name="bar_specific_2" attr.type="boolean" for="node"/>
+<key id="0143152d-1550-4c7e-8455-88108491e79f_77de68daecd823babbb58edb1c8e14d7106e83bb" attr.name="bar_specific_3" attr.type="boolean" for="node"/>
+<key id="0143152d-1550-4c7e-8455-88108491e79f_1b6453892473a467d07372d45eb05abc2031647a" attr.name="bar_specific_4" attr.type="boolean" for="node"/>
+<key id="0143152d-1550-4c7e-8455-88108491e79f_ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4" attr.name="bar_specific_5" attr.type="boolean" for="node"/>
+<key id="0143152d-1550-4c7e-8455-88108491e79f_c1dfd96eea8cc2b62785275bca38ac261256e278" attr.name="bar_specific_6" attr.type="boolean" for="node"/>
+<key id="0143152d-1550-4c7e-8455-88108491e79f_902ba3cda1883801594b6e1b452790cc53948fda" attr.name="bar_specific_7" attr.type="boolean" for="node"/>
+<key id="21bf539b-d4a1-45d7-9ff6-4dc62707e698" attr.name="bar_specific_o" attr.type="string" for="node"/>
+<key id="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_356a192b7913b04c54574d18c28d46e6395428ab" attr.name="internet_specific_1" attr.type="boolean" for="node"/>
+<key id="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_da4b9237bacccdf19c0760cab7aec4a8359010b0" attr.name="internet_specific_2" attr.type="boolean" for="node"/>
+<key id="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_77de68daecd823babbb58edb1c8e14d7106e83bb" attr.name="internet_specific_3" attr.type="boolean" for="node"/>
+<key id="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_1b6453892473a467d07372d45eb05abc2031647a" attr.name="internet_specific_4" attr.type="boolean" for="node"/>
+<key id="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4" attr.name="internet_specific_5" attr.type="boolean" for="node"/>
+<key id="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_c1dfd96eea8cc2b62785275bca38ac261256e278" attr.name="internet_specific_6" attr.type="boolean" for="node"/>
+<key id="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_902ba3cda1883801594b6e1b452790cc53948fda" attr.name="internet_specific_7" attr.type="boolean" for="node"/>
+<key id="a2fa1dc7-a368-478c-892d-fb2672ae2c9e" attr.name="internet_specific_o" attr.type="string" for="node"/>
+<key id="2be88ca4242c76e8253ac62474851065032d6833" attr.name="null" attr.type="string" for="node"/>
+<key id="networkCanvasTargetUUID" attr.name="networkCanvasTargetUUID" attr.type="string" for="edge"/>
+<key id="networkCanvasSourceUUID" attr.name="networkCanvasSourceUUID" attr.type="string" for="edge"/>
+<graph
+  edgedefault="undirected"
+  nc:caseId="test001"
+  nc:sessionUUID="cbdb9906-5534-4be8-acd8-38b2d14552f2"
+  nc:protocolName="HBH-PS-V4(1.7.22)"
+  nc:protocolUID="48ac56977c4b44673ca88e6323fe935f03820133ab567638b28c30af9e9ce92a"
+  nc:codebookHash="f69ccf409724e6111797983297223426a07338fb"
+  nc:sessionExportTime="2022-01-21T18:23:51.527Z"
+    nc:sessionStartTime="2022-01-12T16:18:05.778Z"
+    nc:sessionFinishTime="2022-01-12T16:27:07.585Z"
+>
+<data key="networkCanvasUUID">036e7625-8c0a-40d2-91ff-7d796fe29d2b</data>
+<data key="f480c857-21e8-4d6e-9598-7fc0c6f20028">2022-01-04</data>
+<data key="4825efa0-dcce-4a31-bf41-a4ee8430a5ff">vers</data>
+<data key="7f9350b7-b9f7-46d7-bedf-adb5f7c1150f">my apartment and other people's apartments</data>
+<data key="8c35429e-822a-4314-98d9-bb3e240af2f5">John</data>
+<data key="b448ae37-190d-464a-b496-895b8fd2a95c">yes</data>
+<data key="6d695bbf-bcc5-4f5a-8320-69206c853625">no</data>
+<data key="59cec1f4-37db-4e64-ab53-45deb434e8c3">no</data>
+<data key="cb0c37ac-6ba6-4aae-9bd8-e323c8ae4eb9">sometimes</data>
+<data key="ef2c4714-ac2d-4e11-b8cd-806004d651ff">sometimes</data>
+<data key="197803c4-1a51-4ac7-a064-6d2922760df5_4b8cfc115af495125c084f26210ab91158f1ed34">true</data>
+<data key="197803c4-1a51-4ac7-a064-6d2922760df5_8eebf141217127d04309dcf87a72166a9a485f9e">true</data>
+<data key="197803c4-1a51-4ac7-a064-6d2922760df5_1a1fd23792b692d995174e07c0f07d91794507a2">true</data>
+<data key="3c323bf7-2b6a-4636-8021-6968d5071bcc_0f5f632b7b40b07515a21723e3f13437d15a92f1">true</data>
+<data key="3c323bf7-2b6a-4636-8021-6968d5071bcc_309c9808228395e212d2ca30f9b31fb4de1a1dc7">false</data>
+<data key="3c323bf7-2b6a-4636-8021-6968d5071bcc_3a6886571b563d00d9bd3cbb2f2fba8d6954e1ef">true</data>
+<data key="3c323bf7-2b6a-4636-8021-6968d5071bcc_1b4cd3b8d8bfbe7381aa3df187a7fd1bbc8759d2">true</data>
+<data key="3c323bf7-2b6a-4636-8021-6968d5071bcc_df0ff92025ef3ab6261d64a25c1a7a539f70a023">false</data>
+<data key="7579d671-2466-4c0f-b37a-28f923576cae">true</data>
+<data key="c4228130-7d8b-46de-8d4e-1a768be97c81">true</data>
+<node id="1">
+	<data key="networkCanvasUUID">0cd63af6-25fa-470e-a037-30023cba6184</data>
+	<data key="networkCanvasType">Person</data>
+	<data key="label">JT</data>
+	<data key="423304c1-f96b-423d-bd67-0fff91d1ecde">JT</data>
+	<data key="8743b61a-8e8f-4a62-bbf7-3e2bd82a36c9">true</data>
+	<data key="067f6f4d-4c0a-4e8e-b8f8-0676c495eba5">1234567890</data>
+	<data key="299fc154-3cea-4a8e-a0e7-4c22efc0ac96">28</data>
+	<data key="2ac82073-3edb-4fe2-bb3d-28d86552a828">160</data>
+	<data key="3ebe5ce3-ec5d-4e60-a0be-c9cdfab1ef18">5' 11''</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_528cef87d0bfb947548ab94679d1e5765f19089a">false</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_466bc8cef3e71de796ec483e212724a2c2044c68">true</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_50696dbfb6619de36774115f2378ad6e4491dd26">false</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_df2a49d7833bf5b7ad476167945a5a5bab708aff">false</data>
+	<data key="3d51cc1b-e3fa-482c-9a6a-34438c5a5680">short black</data>
+	<data key="9bb7b859-526e-44fe-9394-d10b8120ce75">2021-04-21</data>
+	<data key="c01e9fae-9d82-41e0-b917-3687084128d1">2021-12-16</data>
+	<data key="d4fd451d-9066-4256-b81a-b0f4f01047bd">5</data>
+	<data key="2aa50d8e-c691-4bd7-ba42-3d480acb6149">top</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_af2f144398b702bfe81a620e2dc31d9d5ff8cff3">true</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_8f10e3b6bcd06327c9a18aa9d7c6c029f97cc774">false</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_9368fedf01ad14ca83beaba813b430109f02c4b5">false</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_9396c631b2e219fa8156dd623c4a887091798fc0">false</data>
+	<data key="41956f2e-2025-44e4-92f1-de194bf2105d_fb360f9c09ac8c5edb2f18be5de4e80ea4c430d0">false</data>
+	<data key="41956f2e-2025-44e4-92f1-de194bf2105d_fd1286353570c5703799ba76999323b7c7447b06">true</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_5f51efbecdb644c4ea8a109f81947c1490d5ba62">true</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_0cfd031077edccac57011036afa9b39a374c8251">false</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_61518fb1715ab4d698aca32a7840ac7b2e507d3e">false</data>
+	<data key="b8e2ec7c-98fa-43c9-8165-6986e364e938_4d0fb475b242228032cbdf6d53924d2538df037b">false</data>
+	<data key="b8e2ec7c-98fa-43c9-8165-6986e364e938_62cdb7020ff920e5aa642c3d4066950dd1f01f4d">true</data>
+	<data key="b8e2ec7c-98fa-43c9-8165-6986e364e938_b483b668ed18bcf5a87b9b1c44e809b058881bae">false</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_fb360f9c09ac8c5edb2f18be5de4e80ea4c430d0">false</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_297f31f02b99ab3fd2219c31def8a1392a5f35b7">true</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_fd1286353570c5703799ba76999323b7c7447b06">false</data>
+	<data key="c3215595-1e0e-4968-bd4f-bbeccda02c5a_X">0.41719786652790425</data>
+	<data key="c3215595-1e0e-4968-bd4f-bbeccda02c5a_Y">0.70125</data>
+	<data key="7aa05207-0eb5-4603-9f36-e9c5f865c0c2">true</data>
+	<data key="f3fd019d-8bdf-4d01-9cad-f1a3de0e13b0">John</data>
+	<data key="721511d6-7911-440e-bf27-53cee4b9a242">Trey</data>
+	<data key="b47a09db-b701-4437-8346-3ee11b1bfbd6">@jt</data>
+	<data key="137ee9ad-ccc4-4274-862f-ee42109b21e3">JT</data>
+	<data key="226658c9-61ee-4ef7-abd4-486db617ce64_95cb0bfd2977c761298d9624e4b4d4c72a39974a">false</data>
+	<data key="226658c9-61ee-4ef7-abd4-486db617ce64_d1854cae891ec7b29161ccaf79a24b00c274bdaa">true</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_356a192b7913b04c54574d18c28d46e6395428ab">false</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_da4b9237bacccdf19c0760cab7aec4a8359010b0">false</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_77de68daecd823babbb58edb1c8e14d7106e83bb">true</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_1b6453892473a467d07372d45eb05abc2031647a">false</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4">false</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_c1dfd96eea8cc2b62785275bca38ac261256e278">false</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_902ba3cda1883801594b6e1b452790cc53948fda">false</data>
+</node>
+<node id="2">
+	<data key="networkCanvasUUID">80610df6-f794-41f2-84c4-90cb0028acfe</data>
+	<data key="networkCanvasType">Person</data>
+	<data key="label">Peter</data>
+	<data key="423304c1-f96b-423d-bd67-0fff91d1ecde">Peter</data>
+	<data key="8743b61a-8e8f-4a62-bbf7-3e2bd82a36c9">true</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_af2f144398b702bfe81a620e2dc31d9d5ff8cff3">false</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_8f10e3b6bcd06327c9a18aa9d7c6c029f97cc774">false</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_9368fedf01ad14ca83beaba813b430109f02c4b5">true</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_9396c631b2e219fa8156dd623c4a887091798fc0">false</data>
+	<data key="41956f2e-2025-44e4-92f1-de194bf2105d_fb360f9c09ac8c5edb2f18be5de4e80ea4c430d0">false</data>
+	<data key="41956f2e-2025-44e4-92f1-de194bf2105d_fd1286353570c5703799ba76999323b7c7447b06">true</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_5f51efbecdb644c4ea8a109f81947c1490d5ba62">false</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_0cfd031077edccac57011036afa9b39a374c8251">true</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_61518fb1715ab4d698aca32a7840ac7b2e507d3e">false</data>
+	<data key="b8e2ec7c-98fa-43c9-8165-6986e364e938_4d0fb475b242228032cbdf6d53924d2538df037b">false</data>
+	<data key="b8e2ec7c-98fa-43c9-8165-6986e364e938_62cdb7020ff920e5aa642c3d4066950dd1f01f4d">false</data>
+	<data key="b8e2ec7c-98fa-43c9-8165-6986e364e938_b483b668ed18bcf5a87b9b1c44e809b058881bae">true</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_fb360f9c09ac8c5edb2f18be5de4e80ea4c430d0">true</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_297f31f02b99ab3fd2219c31def8a1392a5f35b7">false</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_fd1286353570c5703799ba76999323b7c7447b06">false</data>
+	<data key="c3215595-1e0e-4968-bd4f-bbeccda02c5a_X">0.6124744255354376</data>
+	<data key="c3215595-1e0e-4968-bd4f-bbeccda02c5a_Y">0.6025</data>
+	<data key="226658c9-61ee-4ef7-abd4-486db617ce64_95cb0bfd2977c761298d9624e4b4d4c72a39974a">false</data>
+	<data key="226658c9-61ee-4ef7-abd4-486db617ce64_d1854cae891ec7b29161ccaf79a24b00c274bdaa">true</data>
+</node>
+<node id="3">
+	<data key="networkCanvasUUID">ed73b929-363f-48a5-8e95-001cd7faf64a</data>
+	<data key="networkCanvasType">Person</data>
+	<data key="label">Grindr new years</data>
+	<data key="423304c1-f96b-423d-bd67-0fff91d1ecde">Grindr new years</data>
+	<data key="8743b61a-8e8f-4a62-bbf7-3e2bd82a36c9">true</data>
+	<data key="067f6f4d-4c0a-4e8e-b8f8-0676c495eba5">2345678901</data>
+	<data key="299fc154-3cea-4a8e-a0e7-4c22efc0ac96">30</data>
+	<data key="2ac82073-3edb-4fe2-bb3d-28d86552a828">180</data>
+	<data key="3ebe5ce3-ec5d-4e60-a0be-c9cdfab1ef18">6' 1''</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_528cef87d0bfb947548ab94679d1e5765f19089a">true</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_466bc8cef3e71de796ec483e212724a2c2044c68">false</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_50696dbfb6619de36774115f2378ad6e4491dd26">false</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_df2a49d7833bf5b7ad476167945a5a5bab708aff">false</data>
+	<data key="3d51cc1b-e3fa-482c-9a6a-34438c5a5680">buzz cut dark hair</data>
+	<data key="9bb7b859-526e-44fe-9394-d10b8120ce75">2022-01-01</data>
+	<data key="c01e9fae-9d82-41e0-b917-3687084128d1">2022-01-01</data>
+	<data key="d4fd451d-9066-4256-b81a-b0f4f01047bd">1</data>
+	<data key="2aa50d8e-c691-4bd7-ba42-3d480acb6149">vers</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_af2f144398b702bfe81a620e2dc31d9d5ff8cff3">true</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_8f10e3b6bcd06327c9a18aa9d7c6c029f97cc774">false</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_9368fedf01ad14ca83beaba813b430109f02c4b5">false</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_9396c631b2e219fa8156dd623c4a887091798fc0">false</data>
+	<data key="41956f2e-2025-44e4-92f1-de194bf2105d_fb360f9c09ac8c5edb2f18be5de4e80ea4c430d0">false</data>
+	<data key="41956f2e-2025-44e4-92f1-de194bf2105d_fd1286353570c5703799ba76999323b7c7447b06">true</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_5f51efbecdb644c4ea8a109f81947c1490d5ba62">false</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_0cfd031077edccac57011036afa9b39a374c8251">false</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_61518fb1715ab4d698aca32a7840ac7b2e507d3e">true</data>
+	<data key="b8e2ec7c-98fa-43c9-8165-6986e364e938_4d0fb475b242228032cbdf6d53924d2538df037b">true</data>
+	<data key="b8e2ec7c-98fa-43c9-8165-6986e364e938_62cdb7020ff920e5aa642c3d4066950dd1f01f4d">false</data>
+	<data key="b8e2ec7c-98fa-43c9-8165-6986e364e938_b483b668ed18bcf5a87b9b1c44e809b058881bae">false</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_fb360f9c09ac8c5edb2f18be5de4e80ea4c430d0">true</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_297f31f02b99ab3fd2219c31def8a1392a5f35b7">false</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_fd1286353570c5703799ba76999323b7c7447b06">false</data>
+	<data key="c3215595-1e0e-4968-bd4f-bbeccda02c5a_X">0.37178471327033835</data>
+	<data key="c3215595-1e0e-4968-bd4f-bbeccda02c5a_Y">0.48375</data>
+	<data key="7aa05207-0eb5-4603-9f36-e9c5f865c0c2">true</data>
+	<data key="f3fd019d-8bdf-4d01-9cad-f1a3de0e13b0">Ethan</data>
+	<data key="721511d6-7911-440e-bf27-53cee4b9a242">don't know</data>
+	<data key="b47a09db-b701-4437-8346-3ee11b1bfbd6">@ethan</data>
+	<data key="137ee9ad-ccc4-4274-862f-ee42109b21e3">Ethan</data>
+	<data key="226658c9-61ee-4ef7-abd4-486db617ce64_95cb0bfd2977c761298d9624e4b4d4c72a39974a">false</data>
+	<data key="226658c9-61ee-4ef7-abd4-486db617ce64_d1854cae891ec7b29161ccaf79a24b00c274bdaa">true</data>
+	<data key="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_356a192b7913b04c54574d18c28d46e6395428ab">true</data>
+	<data key="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_da4b9237bacccdf19c0760cab7aec4a8359010b0">false</data>
+	<data key="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_77de68daecd823babbb58edb1c8e14d7106e83bb">false</data>
+	<data key="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_1b6453892473a467d07372d45eb05abc2031647a">false</data>
+	<data key="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4">false</data>
+	<data key="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_c1dfd96eea8cc2b62785275bca38ac261256e278">false</data>
+	<data key="77f3a0b8-7e0c-4029-8ad3-5f1fba3f2c39_902ba3cda1883801594b6e1b452790cc53948fda">false</data>
+</node>
+<node id="4">
+	<data key="networkCanvasUUID">371258f9-b25a-4926-b88f-c1d786893848</data>
+	<data key="networkCanvasType">Person</data>
+	<data key="label">E</data>
+	<data key="423304c1-f96b-423d-bd67-0fff91d1ecde">E</data>
+	<data key="8743b61a-8e8f-4a62-bbf7-3e2bd82a36c9">true</data>
+	<data key="067f6f4d-4c0a-4e8e-b8f8-0676c495eba5">123456e456</data>
+	<data key="299fc154-3cea-4a8e-a0e7-4c22efc0ac96">26</data>
+	<data key="2ac82073-3edb-4fe2-bb3d-28d86552a828">170</data>
+	<data key="3ebe5ce3-ec5d-4e60-a0be-c9cdfab1ef18">5' 10''</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_528cef87d0bfb947548ab94679d1e5765f19089a">false</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_466bc8cef3e71de796ec483e212724a2c2044c68">false</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_50696dbfb6619de36774115f2378ad6e4491dd26">false</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_df2a49d7833bf5b7ad476167945a5a5bab708aff">true</data>
+	<data key="3d51cc1b-e3fa-482c-9a6a-34438c5a5680">long brown wavy</data>
+	<data key="9bb7b859-526e-44fe-9394-d10b8120ce75">2021-07-21</data>
+	<data key="c01e9fae-9d82-41e0-b917-3687084128d1">2021-12-17</data>
+	<data key="d4fd451d-9066-4256-b81a-b0f4f01047bd">20</data>
+	<data key="2aa50d8e-c691-4bd7-ba42-3d480acb6149">bottom</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_af2f144398b702bfe81a620e2dc31d9d5ff8cff3">false</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_8f10e3b6bcd06327c9a18aa9d7c6c029f97cc774">false</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_9368fedf01ad14ca83beaba813b430109f02c4b5">false</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_9396c631b2e219fa8156dd623c4a887091798fc0">true</data>
+	<data key="41956f2e-2025-44e4-92f1-de194bf2105d_fb360f9c09ac8c5edb2f18be5de4e80ea4c430d0">false</data>
+	<data key="41956f2e-2025-44e4-92f1-de194bf2105d_fd1286353570c5703799ba76999323b7c7447b06">true</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_5f51efbecdb644c4ea8a109f81947c1490d5ba62">false</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_0cfd031077edccac57011036afa9b39a374c8251">true</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_61518fb1715ab4d698aca32a7840ac7b2e507d3e">false</data>
+	<data key="448174cf-6df8-45b9-bad1-c9fa7b274b76">party</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_fb360f9c09ac8c5edb2f18be5de4e80ea4c430d0">false</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_297f31f02b99ab3fd2219c31def8a1392a5f35b7">true</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_fd1286353570c5703799ba76999323b7c7447b06">false</data>
+	<data key="c3215595-1e0e-4968-bd4f-bbeccda02c5a_X">0.6427498610404816</data>
+	<data key="c3215595-1e0e-4968-bd4f-bbeccda02c5a_Y">0.3125</data>
+	<data key="7aa05207-0eb5-4603-9f36-e9c5f865c0c2">true</data>
+	<data key="f3fd019d-8bdf-4d01-9cad-f1a3de0e13b0">Elli</data>
+	<data key="721511d6-7911-440e-bf27-53cee4b9a242">Parker</data>
+	<data key="b47a09db-b701-4437-8346-3ee11b1bfbd6">bird tattoo</data>
+	<data key="137ee9ad-ccc4-4274-862f-ee42109b21e3">El</data>
+	<data key="226658c9-61ee-4ef7-abd4-486db617ce64_95cb0bfd2977c761298d9624e4b4d4c72a39974a">true</data>
+	<data key="226658c9-61ee-4ef7-abd4-486db617ce64_d1854cae891ec7b29161ccaf79a24b00c274bdaa">false</data>
+</node>
+<node id="5">
+	<data key="networkCanvasUUID">42b11c2f-b928-4dec-8df3-bb56b870b2b0</data>
+	<data key="networkCanvasType">Person</data>
+	<data key="label">Vic</data>
+	<data key="423304c1-f96b-423d-bd67-0fff91d1ecde">Vic</data>
+	<data key="8743b61a-8e8f-4a62-bbf7-3e2bd82a36c9">true</data>
+	<data key="067f6f4d-4c0a-4e8e-b8f8-0676c495eba5">1235225245</data>
+	<data key="299fc154-3cea-4a8e-a0e7-4c22efc0ac96">32</data>
+	<data key="2ac82073-3edb-4fe2-bb3d-28d86552a828">180</data>
+	<data key="3ebe5ce3-ec5d-4e60-a0be-c9cdfab1ef18">5'11''</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_528cef87d0bfb947548ab94679d1e5765f19089a">false</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_466bc8cef3e71de796ec483e212724a2c2044c68">false</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_50696dbfb6619de36774115f2378ad6e4491dd26">false</data>
+	<data key="22f198ae-96da-4aec-96c7-d14a00330c8b_df2a49d7833bf5b7ad476167945a5a5bab708aff">true</data>
+	<data key="3d51cc1b-e3fa-482c-9a6a-34438c5a5680">shoulder length black straight</data>
+	<data key="9bb7b859-526e-44fe-9394-d10b8120ce75">2021-12-10</data>
+	<data key="c01e9fae-9d82-41e0-b917-3687084128d1">2022-01-05</data>
+	<data key="d4fd451d-9066-4256-b81a-b0f4f01047bd">2</data>
+	<data key="2aa50d8e-c691-4bd7-ba42-3d480acb6149">vers</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_af2f144398b702bfe81a620e2dc31d9d5ff8cff3">true</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_8f10e3b6bcd06327c9a18aa9d7c6c029f97cc774">false</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_9368fedf01ad14ca83beaba813b430109f02c4b5">false</data>
+	<data key="703fba04-3433-4b1c-b5a8-98040161cb3d_9396c631b2e219fa8156dd623c4a887091798fc0">false</data>
+	<data key="41956f2e-2025-44e4-92f1-de194bf2105d_fb360f9c09ac8c5edb2f18be5de4e80ea4c430d0">false</data>
+	<data key="41956f2e-2025-44e4-92f1-de194bf2105d_fd1286353570c5703799ba76999323b7c7447b06">true</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_5f51efbecdb644c4ea8a109f81947c1490d5ba62">false</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_0cfd031077edccac57011036afa9b39a374c8251">false</data>
+	<data key="6e67e5c4-5499-4b22-a65c-58a7ec361939_61518fb1715ab4d698aca32a7840ac7b2e507d3e">true</data>
+	<data key="b8e2ec7c-98fa-43c9-8165-6986e364e938_4d0fb475b242228032cbdf6d53924d2538df037b">false</data>
+	<data key="b8e2ec7c-98fa-43c9-8165-6986e364e938_62cdb7020ff920e5aa642c3d4066950dd1f01f4d">true</data>
+	<data key="b8e2ec7c-98fa-43c9-8165-6986e364e938_b483b668ed18bcf5a87b9b1c44e809b058881bae">false</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_fb360f9c09ac8c5edb2f18be5de4e80ea4c430d0">false</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_297f31f02b99ab3fd2219c31def8a1392a5f35b7">false</data>
+	<data key="ffdc764c-6274-448a-a93c-733da777072e_fd1286353570c5703799ba76999323b7c7447b06">true</data>
+	<data key="c3215595-1e0e-4968-bd4f-bbeccda02c5a_X">0.4444457584824438</data>
+	<data key="c3215595-1e0e-4968-bd4f-bbeccda02c5a_Y">0.22</data>
+	<data key="f3fd019d-8bdf-4d01-9cad-f1a3de0e13b0">Victor</data>
+	<data key="721511d6-7911-440e-bf27-53cee4b9a242">Reyes</data>
+	<data key="b47a09db-b701-4437-8346-3ee11b1bfbd6">ears pierced </data>
+	<data key="137ee9ad-ccc4-4274-862f-ee42109b21e3">Vic</data>
+	<data key="226658c9-61ee-4ef7-abd4-486db617ce64_95cb0bfd2977c761298d9624e4b4d4c72a39974a">false</data>
+	<data key="226658c9-61ee-4ef7-abd4-486db617ce64_d1854cae891ec7b29161ccaf79a24b00c274bdaa">true</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_356a192b7913b04c54574d18c28d46e6395428ab">false</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_da4b9237bacccdf19c0760cab7aec4a8359010b0">false</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_77de68daecd823babbb58edb1c8e14d7106e83bb">false</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_1b6453892473a467d07372d45eb05abc2031647a">false</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4">false</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_c1dfd96eea8cc2b62785275bca38ac261256e278">true</data>
+	<data key="0143152d-1550-4c7e-8455-88108491e79f_902ba3cda1883801594b6e1b452790cc53948fda">false</data>
+</node>
+<edge id="1" source="1" target="2">
+	<data key="networkCanvasUUID">75c08e51-6f96-4682-aab2-3dbfb9162aef</data>
+	<data key="networkCanvasType">know</data>
+	<data key="networkCanvasSourceUUID">0cd63af6-25fa-470e-a037-30023cba6184</data>
+	<data key="networkCanvasTargetUUID">80610df6-f794-41f2-84c4-90cb0028acfe</data>
+</edge>
+<edge id="2" source="3" target="5">
+	<data key="networkCanvasUUID">35a83d59-7a3a-4979-a877-91354dd4fbbf</data>
+	<data key="networkCanvasType">had_sex</data>
+	<data key="networkCanvasSourceUUID">ed73b929-363f-48a5-8e95-001cd7faf64a</data>
+	<data key="networkCanvasTargetUUID">42b11c2f-b928-4dec-8df3-bb56b870b2b0</data>
+</edge>
+</graph>
+</graphml>
