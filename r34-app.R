@@ -49,7 +49,11 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                tabPanel("Within Interview Period",
                         "Blank for now"),
                tabPanel("Within 12 months",
-                        "Blank for now"),
+                        fluidRow(
+                            column(12,
+                                   DTOutput("druguse12m"))
+                        )
+                        ),
                ),
     tabPanel("Referral contacts",
              "Blank for now")
@@ -120,6 +124,19 @@ server <- function(input, output) {
       req(input$ego_data)
       
       data <-   DT::datatable(graph_dat()$sexbehav12m,
+                              options = list(pageLength = 25),
+                              class = "cell-border stripe",
+                              rownames = FALSE,
+                              caption = "Sexual Behaviors within 12 Months",
+                              escape = FALSE)
+      
+      return(data)
+  })
+  
+  output$druguse12m <- renderDT({
+      req(input$ego_data)
+      
+      data <-   DT::datatable(graph_dat()$druguse12m,
                               options = list(pageLength = 25),
                               class = "cell-border stripe",
                               rownames = FALSE,

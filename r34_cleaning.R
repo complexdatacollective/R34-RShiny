@@ -26,7 +26,12 @@ data_cleaning <- function(indat) {
                       role = recode(role_self, "top" = "I - Insertive", "bottom" = "R - Receptive",
                                     "vers" = "B - Both"),
                       sex_high = recode(sex_under_influence, "y_anal_vaginal" = "Yes, Anal or Vaginal intercourse (with or without oral sex)",
-                                        "y_oral" = "Oral sex only", "n" = "No"))
+                                        "y_oral" = "Oral sex only", "n" = "No")) %>%
+        dplyr::mutate_at(vars("drug_use","alcohol_use","drug_specific_crack","drug_specific_cocaine",
+                              "drug_specific_heroin","drug_specific_meth","drug_specific_nitrate",
+                              "drug_specific_erectile_dysfunciton","drug_specific_marijuana","drug_specific_other",
+                              "injection_drug_use"),
+                         ~recode(.,`false` = "N - No",`true` = "Y - Yes", .default=NA_character_))
     
     # Read in and clean the person attribute data
     person_attr_file <- filenames[grep("attributeList_Person.csv",filenames)]
@@ -148,12 +153,22 @@ data_cleaning <- function(indat) {
                             paste0("<b>Engaged in injection drug use ",refperiod[i],"</b>"),
                             paste0("Shared injection drug equipment ",refperiod[i]))
     }
+    
+    druguse12mind <- c(egodat$drug_use,egodat$alcohol_use,"","",
+                       egodat$drug_specific_crack,"","",egodat$drug_specific_cocaine,
+                       "","",egodat$drug_specific_heroin,"","",egodat$drug_specific_meth,
+                       "","",egodat$drug_specific_nitrate,"","",egodat$drug_specific_erectile_dysfunciton,
+                       "","",egodat$drug_specific_marijuana,"","",egodat$drug_specific_other,
+                       "","","",egodat$injection_drug_use,"")
+    
+    druguse12m <- data.frame(Questions = druguseqs[[1]],
+                              Responses = druguse12mind)
 
     
     alldat <- list(egodat = egodat, person_attr = person_attr,
                    venue_attr = venue_attr, sex_edgelist = sex_edgelist,
                    know_edgelist = know_edgelist, needles_edgelist = needles_edgelist,
-                   sexbehav12m = sexbehav12m)
+                   sexbehav12m = sexbehav12m,druguse12m = druguse12m)
     
     return(alldat)
 }
