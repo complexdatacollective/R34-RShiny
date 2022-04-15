@@ -2,7 +2,6 @@
 
 #install dependencies if needed
 if (!require(shiny))  install.packages("shiny")
-# if (!require(igraph)) install.packages("igraph")
 if (!require(dplyr)) install.packages("dplyr")
 if(!require(DT)) install.packages("DT")
 if(!require(rclipboard)) install.packages("rclipboard")
@@ -10,7 +9,6 @@ if(!require(rclipboard)) install.packages("rclipboard")
 
 #load libraries
 library(shiny); library(dplyr); library(DT); library(rclipboard)
-# library(igraph)
 
 # source some data cleaning functions
 source("r34_cleaning.R")
@@ -31,14 +29,20 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                                accept = c(".zip")),
                  ),
                  mainPanel(
+                     # this textOuput checks that the data have been loaded correctly
+                     # and the number of referral contacts included
+                     # probably could do something fancier, but not sure it's necessary
                      textOutput("check_load"),
                      value = "Data",
                      
                      fluidRow(
                          column(6,
+                                # these actionButtons allow us to navigate between
+                                # the different navbarpage/menu/panels/etc
+                                # this one uses the observeEvent 'jumpToSexint"
+                                # has the text "Next" on it, and has width 200px
                                 actionButton('jumpToSexint','Next',width='200px')
                                 ),
-                         # textOutput("text"),
                               ),
                            )
   
@@ -51,9 +55,12 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                             value = "interview",
                             h3("Sexual Behavior Within Interview Period"),
                             fluidRow(
+                                # NEEDS TO HAVE SOME DATA OUTPUTTED HERE
                                 column(3,
+                                       # another navigation button
                                        actionButton('jumpToData','Previous',width='200px')),
                                 column(3,
+                                       # another navigation button
                                        actionButton('jumpToSex12m','Next',width='200px'))
                             )
                             
@@ -61,14 +68,23 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                    tabPanel("Within 12 months",value = "12m",
                             h3("Sexual Behavior Within 12 months"),
                             fluidRow(
+                                # I don't know if you need the rclipboardSetup()
+                                # on each tabpanel/etc or just once, but doesn't seem
+                                # to hurt having it on each one - this is so that we
+                                # can have copy buttons in the datatable outputted, "sexbehav12m"
                                 rclipboardSetup(),
                                 column(12,
+                                       # output our datatable w/sexual behaviour in the past 12 months
                                        DT::dataTableOutput("sexbehav12m")),
                                 column(3,
+                                       # another navigation button
                                        actionButton('jumpBackToSexint','Previous',width='200px')),
                                 column(3,
+                                       # another navigation button
                                        actionButton('jumpToSubint','Next',width='200px'))
                             ),
+                            # added a line break to make there be a little white space below
+                            # the buttons
                             br()
                    )
                 
@@ -78,21 +94,28 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                         value = "interviewsub",
                         h3("Substance Use Within Interview Period"),
                         fluidRow(
+                            # NEEDS TO HAVE SOME DATA OUTPUTTED HERE
                             column(3,
+                                   # another navigation button
                                    actionButton('jumpBackToSex12m','Previous',width='200px')),
                             column(3,
+                                   # another navigation button
                                    actionButton('jumpToSub12m','Next',width='200px'))
                         )),
                tabPanel(title = "Within 12 months",
                         value = "12msub",
                         h3("Substance Use Within 12 months"),
                         fluidRow(
+                            # allows for the copy buttons in "druguse12m" table
                             rclipboardSetup(),
                             column(12,
+                                   # datatable with drug use in the previous 12 months
                                    DTOutput("druguse12m")),
                             column(3,
+                                   # another navigation button
                                    actionButton('jumpBackToSubint','Previous',width='200px')),
                             column(3,
+                                   # another navigation button
                                    actionButton('jumpToReferrals','Next',width='200px'))
                         ),
                         br()
@@ -103,10 +126,15 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
              h3("Referral Contacts"),
              fluidRow(
                  column(12, 
+                        # this selectInput allows people to choose which contact
+                        # the data will be displayed for - choices here gets updated
+                        # using the observe in the server function
                         selectInput('Contact','Contact:',choices = 1)),
                  column(12,
+                        # data table with referral contact info
                         DTOutput("referral_table")),
                  column(6,
+                        # another navigation button
                         actionButton('jumpBackToSub12m','Previous',width='200px'))
              ),
              br()
@@ -118,100 +146,79 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
 #server
 server <- function(input, output) {
   
+    # use the reactive() function to allow us to have an object we can use throughout
+    # that stores the cleaned data - after running this 
+    # can use graph_dat() to call the data throughout
     graph_dat <- reactive({
         
         req(input$all_data)
         
+        # run our data_cleaning function from the r34_cleaning script
         return(data_cleaning(input$all_data$datapath))
         
-        # igraph::read_graph(input$all_data$datapath,"graphml")
-        
-    }) # now can use graph_dat() to call the data throughout
+    }) 
     
-  # output$alldata <- renderTable({
-  #     
-  #     req(input$all_data)
-  #     
-  #     ego_dat <- graph_dat()$egodat
-  #     
-  #     # ego_dat <- unlist(igraph::graph_attr(graph_dat()))
-  #     
-  #     return(ego_dat)
-  # }) 
-  
-  # output$caseid <- renderTable({
-  #     
-  #     req(input$all_data)
-  #     
-  #     # vertices_dat <- igraph::as_data_frame(graph_dat(),"vertices")
-  #     
-  #     # vertices_dat$id
-  #     
-  # }) 
-  
-  # output$sextypes <- renderTable({
-  #   
-  #     req(input$all_data)
-  #     
-  #     # ego_dat <- igraph::graph_attr(graph_dat())
-  #   
-  #   # df <- read.csv(input$all_data$datapath)
-  #   
-  #   # data <- c(df[1, 17], df[1,18], df[1,19])
-  #   return(data)
-  # }) 
-  # 
-  # output$condomuse <- renderTable({
-  #   
-  #     req(input$all_data)      
-  #     
-  #     
-  # })
-  
-  # output$sexbehav12m <- renderTable({
-  #     req(input$all_data)
-  # 
-  #     return(graph_dat()$sexbehav12m)
-  # }, bordered = TRUE)
-    
+    # this just checks that our data has loaded in and creates a message to tell the user
+    # that it was loaded ok
     output$check_load <- renderText({
         req(input$all_data)
         
+        # is there something called "egodat" in our graph_dat() object?
         check1 <- "egodat" %in% names(graph_dat())
+        # how many referrals did we have (first column in "contact_referral" dataframe
+        # is the responses, so the number of columns - 1 is the number of referrals)
         check2 <- ncol(graph_dat()$contact_referral)-1
         if(check1) {
+            # concatenate a string with our check
             outstring <- paste0("Respondent data successfully loaded, with ",check2,
                                 " contact referrals provided.")
         } else {
+            # if not tell the user that the zip file they provided didn't have what
+            # we expected it to have
             outstring <- "No respondent data loaded."
         }
         return(outstring)
     })
   
+    # data table with all sexual behavior for the past 12 months in it
   output$sexbehav12m <- renderDT({
       req(input$all_data)
       
       data <- graph_dat()$sexbehav12m
+      # add a column with a "Copy" button - this is super finnicky and I don't
+      # understand how the rclipButton function works - I guess it's outputting
+      # HTML for the clip button, and then because we use "escape=FALSE" below
+      # that HTML gets rendered into a clip button...
       data$Copy <- unlist(lapply(data$Responses,
                                  function(x) {
                                      rclipButton(
+                                         # not sure what this does
                                          inputId = "clipbtn",
+                                         # the button will say "Copy" on it
                                          label = "Copy",
+                                         # text that's getting copied is data$Responses
                                          clipText = x,
+                                         # there'll be a little picture of a clipboard
                                          icon = icon("clipboard")
                                      ) %>% as.character()
                                  }))
       
       data <-   DT::datatable(data,
+                              # this tells us how many things in the table we want to have
+                              # on a single page, could fiddle with this instead of 25
                               options = list(pageLength = 25),
+                              # this is just an appearance thing
                               class = "cell-border stripe",
+                              # turn off rownames
                               rownames = FALSE,
-                              # caption = "Sexual Behaviors within 12 Months",
+                              # Need "escape = FALSE" to render the HTML for the clip button
+                              # correctly
                               escape = FALSE)
       
       return(data)
   })
   
+  # This one is basically identical to the sexbehav12m one but for druguse12m
   output$druguse12m <- renderDT({
       req(input$all_data)
       
@@ -236,12 +243,10 @@ server <- function(input, output) {
       return(data)
   })
   
-  #labels
-  # output$caseID <- renderText({"case id: "})
-  # output$sexTypes <- renderText({"types of sex: "})
-  # output$condomUse <- renderText({"condom use: "})
-  # output$text <- renderText({"Copy This!"})
-  
+  # These are all of the observeEvents for the navigation buttons
+  # tell us that when someone has clicked on the different buttons, which
+  # page do they want to move to (the "selected" argument) - these names
+  # are in the "value" argument of the tabPanel etc
   observeEvent(input$jumpToSexint, {
       updateNavbarPage(inputId = "navpage",
                         selected = "interview")
@@ -292,25 +297,19 @@ server <- function(input, output) {
                        selected = "Referral")
   })
   
-  # Add clipboard buttons
-  # output$clip <- renderUI({
-  #     output$clip <- renderUI({
-  #         rclipButton(
-  #             inputId = "clipbtn",
-  #             label = "Copy",
-  #             clipText = graph_dat()$sexbehav12m[15,2], 
-  #             icon = icon("clipboard")
-  #         )
-  #     })
-  # })
-  
+  # This updates the Contact dropdown to respond to the number of contact referrals in the 
+  # graph_dat()$contact_referral object (ncols-1 because first column is "Response" column)
   observe({
       updateSelectInput(inputId="Contact", choices = 1:(ncol(graph_dat()$contact_referral)-1))
   })
   
+  # This table is similar to the sexbehav12m and druguse12m but adds in needing to figure out
+  # which referral we want to be displaying data for
   output$referral_table <- renderDT({
       req(input$all_data)
       
+      # choosing to only display the contact_referral columns 1 ("Responses" column)
+      # and as.numeric(input$Contact)+1 which is using the dropdown menu input
       data <- graph_dat()$contact_referral[,c(1,as.numeric(input$Contact)+1)]
       names(data)[2] <- "Responses"
       data$Copy <- unlist(lapply(data[,2],
@@ -341,9 +340,24 @@ shinyApp(ui, server)
 # is this going to be hosted on a web server? if yes, need to save this as "app.R"? (or could have ui.R and server.R)
 
 ### TO DO:
+# - update based on the new version of outputs:
+#       - output a dummy set a responses (I did this by hand, there's a way to automate it but it seemed to not work for Johs)
+#       - check which variables still exist and see if coding for any of them have changed
+#       - check if any additional CHIMS variables for the sections we have filled in can be added (there should definitely
+#         be some for the Contacts section, likely several others)
+# - create the "interview period" table for sexual behavior
+#       - this will involve checking the first & last sex dates of the partnership and then
+#         re-answering the CHIMS questions based on those first & last dates of sex
+#       - the way the HBH team want to have the interview period entered is to have a dropdown/fill in
+#         for the data enterer to fill in the Shiny, then have the R code automatically update accordingly
+# - add a venue section 
+#       - check through CHIMS Model_Print_xlsx to figure out which venue variables need to be
+#         outputted
 # - make the question sections collapsible? and automatically collapse no's 
 #       - errors out even in example code...: (https://www.rdocumentation.org/packages/shinydashboardPlus/versions/0.8.0.9000/topics/accordion)
 #       - might need to be built into the context of a dashboard...: (https://cran.r-project.org/web/packages/bs4Dash/vignettes/extra-elements.html)
-# - button that copies adjacent text to the clipboard (https://cran.r-project.org/web/packages/rclipboard/readme/README.html)
-# - deal w/missing data!
+#       - I think the best way to deal with this is to have a set of ifelse's in the data cleaning that collapses
+#         rows based on the responses... it'll be annoying to do but probably the easiest option
+# - deal w/missing data!  I think right now this is very susceptible to NAs - check what happens
+#   if folks don't reply to questions
 

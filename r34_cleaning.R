@@ -2,12 +2,24 @@
 
 data_cleaning <- function(indat,interviewperiod = 12) {
     
+    # filenames will have the file names inside of the zipped data file that you've
+    # put into "indat" - so all of the various filenames coming from a network canvas
+    # interview
     filenames <- unzip(indat,list=TRUE)$Name
     # Read in and clean the ego data
+    # figure out which one is the "ego" data and save that as egofile
     egofile <- filenames[grep("ego.csv",filenames)]
+    # read in the csv for that egofile
     egodat <- read.csv(unz(indat,egofile))
+    # create some ego variables relevant for sexual behavior in the past year
     egodat <- egodat %>%
-        dplyr::mutate(condoms12m = case_when(condoms_anal_insertive %in% c("sometimes","no") |
+        dplyr::mutate(
+                    # condoms12m is to fill in the question "Had sex without using a condom during the interview period?"
+                    # classifies folks' non-condom usage in the past year at an ego level,
+                    # using the CHIMS categories - uses variables condoms_anal_insertive, 
+                    # condoms_anal_receptive, condoms_vaginal, condoms_oral, condoms_oral_receptive
+                    # which all apply to the previous year
+                    condoms12m = case_when(condoms_anal_insertive %in% c("sometimes","no") |
                                                  condoms_anal_receptive %in% c("sometimes","no") |
                                                  condoms_vaginal %in% c("sometimes","no") ~ "Y - Yes, Anal or Vaginal intercourse (with or without oral sex) [YAV]",
                                              condoms_oral_receptive %in% c("sometimes","no") | 
@@ -16,35 +28,56 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                                                  condoms_vaginal=="yes" & condoms_oral_receptive=="yes" &
                                                  condoms_oral=="yes" ~ "N - No [N]",
                                              TRUE ~ "UNK - Unknown [UNK]"),
-                      condoms_anal12m = ifelse(condoms_anal_insertive %in% c("sometimes","no") |
+                    # condoms_anal12m, condoms_vaginal_12m, and condoms_oral12m are created
+                    # to be pasted together below in condoms_sextype_12m which is to fill in:
+                    # "Type of Sex without using a condom" - these variables are
+                    # only filled if folks had sex without a condom, otherwise blank
+                    condoms_anal12m = ifelse(condoms_anal_insertive %in% c("sometimes","no") |
                                                 condoms_anal_receptive %in% c("sometimes","no"), "A - Anal [A]",""),
-                      condoms_vaginal12m = ifelse(condoms_vaginal %in% c("sometimes","no"), "V - Vaginal [V]",""),
-                      condoms_oral12m = ifelse(condoms_oral_receptive %in% c("sometimes","no") |
+                    condoms_vaginal12m = ifelse(condoms_vaginal %in% c("sometimes","no"), "V - Vaginal [V]",""),
+                    condoms_oral12m = ifelse(condoms_oral_receptive %in% c("sometimes","no") |
                                                 condoms_oral %in% c("sometimes","no"), "O - Oral [O]",""),
-                      # condoms_sextype12m = paste0(condoms_anal12m,condoms_vaginal12m,condoms_oral12m),
-                      condoms12m_pos = case_when(condoms_anal_insertive %in% c("sometimes","no") &
+                    # condoms12m_pos is created to answer the question "Positioning (anal only)"
+                    # in the condom sequence
+                    condoms12m_pos = case_when(condoms_anal_insertive %in% c("sometimes","no") &
                                                      condoms_anal_receptive %in% c("sometimes","no") ~ "B - Both [B]",
                                                  condoms_anal_insertive %in% c("sometimes","no") ~ "I - Insertive [I]",
                                                  condoms_anal_receptive %in% c("sometimes","no") ~ "R - Receptive [R]",
                                                  TRUE ~ NA_character_  ),
-                      sexual_identity = recode(sexual_identity, `1` = "Heterosexual", `2` = "Gay or Lesbian",
+                    # sexual_identity currently doesn't get used - this is recoding the ego's sexual
+                    # identity - need to figure out where this goes for CHIMS
+                    sexual_identity = recode(sexual_identity, `1` = "Heterosexual", `2` = "Gay or Lesbian",
                                                `3` = "Bisexual", `4` = "Unknown", `5` = "Other", .default=NA_character_),
-                      role = recode(role_self, "top" = "I - Insertive [I]", "bottom" = "R - Receptive [R]",
+                    # role allows us to answer the ego's "Type of Sex with male partner(s)"
+                    # recoding the network canvas options to match CHIMS
+                    role = recode(role_self, "top" = "I - Insertive [I]", "bottom" = "R - Receptive [R]",
                                     "vers" = "B - Both [B]"),
-                      sex_high = recode(sex_under_influence, "y_anal_vaginal" = "Y - Yes, Anal or Vaginal intercourse (with or without oral sex) [YAV]",
+                    # sex_high answers the CHIMS q "Had sex while intoxicated or high on drugs during the interview period?"
+                    # recodes the output from network canvas
+                    sex_high = recode(sex_under_influence, "y_anal_vaginal" = "Y - Yes, Anal or Vaginal intercourse (with or without oral sex) [YAV]",
                                         "y_oral" = "O - Oral sex only [O]", "n" = "N - No [N]")) %>%
+        # this mutate_at recodes all of the ego level drug use variables from Network Canvas's output
+        # (false/true) to CHIMS's version (N - No/Y - Yes)
         dplyr::mutate_at(vars("drug_use","alcohol_use","drug_specific_crack","drug_specific_cocaine",
                               "drug_specific_heroin","drug_specific_meth","drug_specific_nitrate",
                               "drug_specific_erectile_dysfunciton","drug_specific_marijuana","drug_specific_other",
                               "injection_drug_use"),
                          ~recode(.,`false` = "N - No",`true` = "Y - Yes", .default=NA_character_))
     
+    # creates the pasted together version of the three condom use by type of sex questions created above
+    # this is the best way I could find to collapse and paste a comma only when not blank
     egodat$condoms_sextype12m <- apply(cbind(egodat$condoms_anal12m,egodat$condoms_vaginal12m,egodat$condoms_oral12m),1,
                                        function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     
-    # Read in and clean the person attribute data
+    
+    
+    # Read in and clean the person attribute data - this has the attributes for sexual partner alters
+    # and needle sharing alters
+    # figure out which one is the "attributeList_Person" data and save that as person_attr_file
     person_attr_file <- filenames[grep("attributeList_Person.csv",filenames)]
+    # read in the person attribute data
     person_attr <- read.csv(unz(indat,person_attr_file))
+    # recode a bunch of variables that were true/false as TRUE/FALSE to make them easiser to manipulate
     person_attr <- person_attr %>%
         dplyr::mutate_at(vars("sex_partner","race_white","race_black","race_asian","race_hisp",
                            "gender_cis_male","gender_cis_female","gender_trans_male",
@@ -60,42 +93,60 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                            "partner_sex_type_female_oral","partner_sex_type_female_vaginal",
                            "partner_sex_type_male_anal","partner_sex_type_male_oral","partner_type_spouse"),
                          ~recode(., `false`= FALSE, `true` = TRUE, .default = NA))
+    # create a bunch of variables for CHIMS based on the person_attr data
     person_attr <- person_attr %>%
-        ######## contact_basis - THIS VARIABLE IS NOT CODED CORRECTLY!!!!!!!!!!!!!
-        mutate(contact_basis = case_when(sex_partner==TRUE & is.na(drug_use_partner) ~ "P1 - Sex partner [P1]",
+        mutate(
+            # contact_basis is needed for the referral categories
+            ######## check that this coding is correct...
+            ### not sure how to use "benefit_from_test" variable in person_attr - there's a dropdown in 
+            ### contact's referral basis that is "A3 - Associate - anyone else who would benefit from an exam" and
+            ### "S3 - Suspect - anyone else who would benefit from an exam"
+            contact_basis = case_when(sex_partner==TRUE & is.na(drug_use_partner) ~ "P1 - Sex partner [P1]",
                                          drug_use_partner==TRUE & is.na(sex_partner) ~ "P2 - Needle sharing partner [P2]",
                                          sex_partner==TRUE & drug_use_partner==TRUE ~ "P3 - Both sex and needle sharing partner [P3]",
                                          TRUE ~ NA_character_),
-               spouse = ifelse(partner_type_spouse==TRUE, "Yes [YES]", "No [NO]"),
-               gender = case_when(gender_cis_male==TRUE ~ "Male [MALE]",
+            # recode the spouse variable to be consistent with CHIMS
+            spouse = ifelse(partner_type_spouse==TRUE, "Yes [YES]", "No [NO]"),
+            # recode partner's gender to eb consistent with CHIMS
+            gender = case_when(gender_cis_male==TRUE ~ "Male [MALE]",
                                   gender_cis_female==TRUE ~ "Female [FEMALE]",
                                   gender_trans_female==TRUE ~ "Transgender MTF [MTF]",
                                   gender_trans_male==TRUE ~ "Transgender - FTM [FTM]",
                                   TRUE ~ as.character(gender_other)),
-               pregnant = case_when(pregnant_yes==TRUE ~ "Yes [YES]",
+            # recode pregnancy variables to be consistent with CHIMS
+            pregnant = case_when(pregnant_yes==TRUE ~ "Yes [YES]",
                                     pregnant_no == TRUE ~ "No [NO]",
                                     TRUE ~ "Not Applicable"),
-               bar1 = ifelse(bar_specific_1==TRUE, "Rosecoe's Tavern",""),
-               bar2 = ifelse(bar_specific_2==TRUE, "Progress Bar",""),
-               bar3 = ifelse(bar_specific_3==TRUE,"Sidetrack",""),
-               bar4 = ifelse(bar_specific_4==TRUE, "Hydrate Nightclub",""),
-               bar5 = ifelse(bar_specific_5==TRUE, "Scarlet Bar",""),
-               bar6 = ifelse(bar_specific_6==TRUE, "Berlin Nightclub",""),
-               bar7 = ifelse(bar_specific_7==TRUE, "Jeffrey Pub",""),
-               internet1 = ifelse(internet_specific_1==TRUE, "Grindr",""),
-               internet2 = ifelse(internet_specific_2==TRUE, "Tinder",""),
-               internet3 = ifelse(internet_specific_3==TRUE, "Jack'd",""),
-               internet4 = ifelse(internet_specific_4==TRUE, "Facebook", ""),
-               internet5 = ifelse(internet_specific_5==TRUE, "Snapchat",""),
-               internet6 = ifelse(internet_specific_6==TRUE, "Instagram",""),
-               internet7 = ifelse(internet_specific_7==TRUE, "Scruff",""),
-               met_internet = ifelse(venue_met_internet==TRUE,"Yes [YES]", "No [NO]"),
-               asian = ifelse(race_asian==TRUE, "Asian",""),
-               black = ifelse(race_black==TRUE, "Black",""),
-               white = ifelse(race_white==TRUE,"White",""),
-               latinx = ifelse(race_hisp==TRUE,"Hispanic/Latino",""),
-               first_sex = format(as.Date(first_sex), "%b %d, %Y"),
-               last_sex = format(as.Date(last_sex), "%b %d, %Y"))
+            # recode the bar and internet 'specific' variables from where a partner
+            # was met to list the actual name, to be pasted together below in "venue_all"
+            # variable
+            bar1 = ifelse(bar_specific_1==TRUE, "Rosecoe's Tavern",""),
+            bar2 = ifelse(bar_specific_2==TRUE, "Progress Bar",""),
+            bar3 = ifelse(bar_specific_3==TRUE,"Sidetrack",""),
+            bar4 = ifelse(bar_specific_4==TRUE, "Hydrate Nightclub",""),
+            bar5 = ifelse(bar_specific_5==TRUE, "Scarlet Bar",""),
+            bar6 = ifelse(bar_specific_6==TRUE, "Berlin Nightclub",""),
+            bar7 = ifelse(bar_specific_7==TRUE, "Jeffrey Pub",""),
+            internet1 = ifelse(internet_specific_1==TRUE, "Grindr",""),
+            internet2 = ifelse(internet_specific_2==TRUE, "Tinder",""),
+            internet3 = ifelse(internet_specific_3==TRUE, "Jack'd",""),
+            internet4 = ifelse(internet_specific_4==TRUE, "Facebook", ""),
+            internet5 = ifelse(internet_specific_5==TRUE, "Snapchat",""),
+            internet6 = ifelse(internet_specific_6==TRUE, "Instagram",""),
+            internet7 = ifelse(internet_specific_7==TRUE, "Scruff",""),
+            # create a yes/no variable for whether the partner was met online
+            met_internet = ifelse(venue_met_internet==TRUE,"Yes [YES]", "No [NO]"),
+            # recode specific race/ethnicity variables to be able to be concatenated
+            # below into "race" variable
+            asian = ifelse(race_asian==TRUE, "Asian",""),
+            black = ifelse(race_black==TRUE, "Black",""),
+            white = ifelse(race_white==TRUE,"White",""),
+            latinx = ifelse(race_hisp==TRUE,"Hispanic/Latino",""),
+            # format the dates of first and last sex
+            first_sex = format(as.Date(first_sex), "%b %d, %Y"),
+            last_sex = format(as.Date(last_sex), "%b %d, %Y"))
+    # concatenate all of the specific venues/internet places the person was met into 
+    # a nicely formatted string, pasted together with commas
     person_attr$venue_all <- apply(cbind(person_attr$bar1,person_attr$bar2,person_attr$bar3,
                                          person_attr$bar4,person_attr$bar5,person_attr$bar6,
                                          person_attr$bar7,person_attr$bar_specific_o,person_attr$internet1,
@@ -103,24 +154,37 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                                          person_attr$internet5,person_attr$internet6,person_attr$internet7,
                                          person_attr$internet_specific_o),1,
                                    function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    # concatenate all of the specific race/ethnicity variables together into a nicely
+    # formatted string, pasted together with commas
     person_attr$race <- apply(cbind(person_attr$asian,person_attr$black,person_attr$white,
                                     person_attr$latinx),1,
                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    # Create a bunch of summary variables across each partner
     allpartners_dat <- person_attr %>%
-        summarise(sexw_cisf = case_when(sum(partner_sex_type_female_anal & gender_cis_female)>=1 |
+        summarise(
+                  # create a variable for CHIMS to tell us within the past 12 months whether the respondent
+                  # has had sex w/ a cis female partner and type of sex - "Had sex with a female during the interview period?"
+                  # i assumed that because they separate out transgender partners, that when they ask about
+                  # male and female partners they're only asking about cis partners - might be worth confirming
+                  sexw_cisf = case_when(sum(partner_sex_type_female_anal & gender_cis_female)>=1 |
                                          sum(partner_sex_type_female_vaginal & gender_cis_female)>=1 ~ 
                                             "Y - Yes, Anal or Vaginal Intercourse (with or without oral sex) [YAV]",
                                         sum(partner_sex_type_female_oral & gender_cis_female)>=1 ~ "O - Oral sex only [O]",
                                         TRUE ~ "N - No [N]"),
+                  # these three variables - anal_cisf, vag_cisf, oral_cisf are created to be concatenated below
+                  # into cisf_sextype
                   anal_cisf = ifelse(sum(partner_sex_type_female_anal & gender_cis_female)>=1,"A - Anal [A]",""),
                   vag_cisf = ifelse(sum(partner_sex_type_female_vaginal & gender_cis_female)>=1,"V - Vaginal [V]",""),
                   oral_cisf = ifelse(sum(partner_sex_type_female_oral & gender_cis_female)>=1,"O - Oral [O]",""),
+                  # the next few variables are analagous for cis male, transgender, and anonymous partners as the above for cis female
+                  # cis male partners
                   sexw_cism = case_when(sum(partner_sex_type_male_anal & gender_cis_male)>=1 ~ 
                                             "Y - Yes, Anal Intercourse (with or without oral sex) [YAV]",
                                         sum(partner_sex_type_male_oral & gender_cis_male)>=1 ~ "O - Oral sex only [O]",
                                         TRUE ~ "N - No [N]"),
                   anal_cism = ifelse(sum(partner_sex_type_male_anal & gender_cis_male)>=1,"A - Anal [A]",""),
                   oral_cism = ifelse(sum(partner_sex_type_male_oral & gender_cis_male)>=1,"O - Oral [O]",""),
+                  # transgender partners
                   sexw_transg = case_when(sum(partner_sex_type_female_anal & gender_trans_female)>=1 |
                                               sum(partner_sex_type_female_vaginal & gender_trans_female)>=1 |
                                               sum(partner_sex_type_male_anal & gender_trans_male)>=1 ~ 
@@ -133,6 +197,7 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                   vag_transg = ifelse(sum(partner_sex_type_female_vaginal & gender_trans_female)>=1, "V - Vaginal [V]",""),
                   oral_transg = ifelse(sum(partner_sex_type_male_oral & gender_trans_male)>=1 |
                                            sum(partner_sex_type_female_oral & gender_trans_female)>=1,"O - Oral [O]"),
+                  # anonymous partners
                   sexw_anon = case_when(sum(partner_sex_type_female_anal & partner_type_anon)>=1 |
                                             sum(partner_sex_type_female_vaginal & partner_type_anon)>=1 |
                                             sum(partner_sex_type_male_anal & partner_type_anon)>=1 ~
@@ -146,12 +211,20 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                   vag_anon = ifelse(sum(partner_sex_type_female_vaginal & partner_type_anon)>=1,"V - Vaginal [V]",""),
                   oral_anon = ifelse(sum(partner_sex_type_female_oral & partner_type_anon)>=1 |
                                          sum(partner_sex_type_male_oral & partner_type_anon)>=1, "O - Oral [O]",""),
+                  # these variables (n_) total the number of cis female, male, transgender, and anonymous partners
+                  # in the previous 12 months
                   n_cisf = sum(gender_cis_female==TRUE & sex_partner==TRUE,na.rm=TRUE),
                   n_cism = sum(gender_cis_male==TRUE & sex_partner==TRUE, na.rm=TRUE),
                   n_trans = sum((gender_trans_female==TRUE | gender_trans_male==TRUE) &
                                     sex_partner==TRUE, na.rm=TRUE),
                   n_anon = sum(partner_type_anon==TRUE & sex_partner==TRUE,na.rm=TRUE),
+                  # variable to answer "Had sex with a person with AIDS or documented HIV infection during the interview period?"
+                  # only ask if a partner is known HIV positive, not if their status is unknown, so 
+                  # can't split up "No" and "Unknown"
                   sexw_hivpos = ifelse(sum(HIV_positive & sex_partner,na.rm=TRUE)>=1,"Y - Yes [Y]","No or Unknown"))
+    
+    # these variables do the nice concatenation for sex type with different gender partners, anonymous partners,
+    # and HIV positive partners
     allpartners_dat$cisf_sextype <- apply(cbind(allpartners_dat$anal_cisf,allpartners_dat$vag_cisf,allpartners_dat$oral_cisf),1,
                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     allpartners_dat$cism_sextype <- apply(cbind(allpartners_dat$anal_cism,allpartners_dat$oral_cism),1,
@@ -165,19 +238,20 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     
 
     
-    ### how to use "benefit_from_test" variable in person_attr - there's a dropdown in 
-    ### contact's referral basis that is "A3 - Associate - anyone else who would benefit from an exam" and
-    ### "S3 - Suspect - anyone else who would benefit from an exam"
+
 
     
 
     # Read in and clean the venue attribute data
+    # same process with the venue data
     venue_attr_file <- filenames[grep("attributeList_Venue.csv",filenames)]
     venue_attr <- read.csv(unz(indat,venue_attr_file))
     
     venue_summary <- venue_attr %>%
         summarise(any_online = ifelse(sum(type=="app")>0,"Y - Yes","N - No"))
     
+    # currently not using the sex_edgelist, know_edgelist, or needles_edgelist to
+    # do anything
     # Read in and clean the edge list of sex partners
     sex_edgelist_file <- filenames[grep("edgeList_had_sex.csv",filenames)]
     sex_edgelist <- read.csv(unz(indat,sex_edgelist_file))
@@ -190,20 +264,12 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     needles_edgelist_file <- filenames[grep("edgeList_shared_needles.csv",filenames)]
     needles_edgelist <- read.csv(unz(indat,needles_edgelist_file))
     
-    # no longer using graphml file
-    # dat <- igraph::read_graph(indat,"graphml")
-    # egodat <- igraph::graph_attr(dat)
-    # egodat <- do.call(cbind.data.frame,egodat)
-    # alterdat <- igraph::as_data_frame(dat,"vertices")
-    # edgesdat <- igraph::as_data_frame(dat,"edges")
     
-    # library(xml2)
-    # dat <- xml2::read_xml(indat)
-    # 
-    # library(XML)
-    # test <- xmlParse(indat)
-    # test2 <- xmlToList(test)
-    
+    # This chunk of code writes out the different CHIMS questions to go into the table
+    # since the questions are the same for the interview period and past 12 months, do
+    # this for loop to create the two lists formatted the way we want
+    # the <b> at the start and </b> at the end tell R that we want that string to be bolded 
+    # tried to bold the groups of questions
     refperiod <- c("in past 12 months?", "during the interview period?")
     sexbehavqs <- list()
     for(i in 1:length(refperiod)) {
@@ -240,6 +306,9 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                             paste0("<b>Met partners through the Internet ",refperiod[i],"</b>"))
     }
     
+    # This is a super clunky way to do this, but basically looking at the list of questions
+    # from CHIMS in the sexbehavqs object, and putting the outputs from the different datasets we've created above
+    # in the order that these questions are - pretty finnicky so probably good to triple check when editing!
     sexbehav12mind <- c(# A bunch of these outputs can't be filled yet because data collection not consistent
                         # with CHIMS... 
                         allpartners_dat$sexw_cisf,allpartners_dat$cisf_sextype,allpartners_dat$n_cisf,
@@ -249,13 +318,14 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                         egodat$condoms12m, egodat$condoms_sextype12m, egodat$condoms12m_pos,
                         egodat$sex_high,"",
                         "","","","","","","","","",allpartners_dat$sexw_hivpos,allpartners_dat$hivpos_gender,
+                        # FOR ANY ONLINE PARTNERS COULD ALSO USE person_attr$internet_specific1 etc
                         venue_summary$any_online)
     
-    # FOR ANY ONLINE PARTNERS LOOK AT person_attr$internet_specific1 etc
-    
+    # put together the questions and responses for sexual behavior in the past 12 months
     sexbehav12m <- data.frame(Questions = sexbehavqs[[1]],
                               Responses = sexbehav12mind)
     
+    # Now go through the same process for drug use in the past 12 months
     druguseqs <- list()
     for(i in 1:length(refperiod)) {
         druguseqs[[i]] <- c(paste0("<b>Any alcohol or drug use ",refperiod[i]," (injection or non-injection)</b>"),
@@ -282,6 +352,11 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     druguse12m <- data.frame(Questions = druguseqs[[1]],
                               Responses = druguse12mind)
     
+    # Now go through the same process for contact referrals
+    # haven't pulled all the questions from CHIMS here because there are quite
+    # a lot of questions that aren't getting asked at present in Network Canvas - 
+    # i think Howard Brown will guide whether there are more sections that should be filled
+    # in or not
     contact_referralqs <- c("Contact's referral basis","Name or alias","Contact's first name",
                             "Contact's last name",
                             "Is this person the spouse of the original patient?",
@@ -309,6 +384,7 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                                    contact_referralind)
 
     
+    # Now make a list of all of those datasets for us to be able to use in the Shiny app
     alldat <- list(egodat = egodat, person_attr = person_attr,
                    venue_attr = venue_attr, sex_edgelist = sex_edgelist,
                    know_edgelist = know_edgelist, needles_edgelist = needles_edgelist,
