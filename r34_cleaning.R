@@ -54,8 +54,9 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                                     "vers" = "B - Both [B]"),
                     # sex_high answers the CHIMS q "Had sex while intoxicated or high on drugs during the interview period?"
                     # recodes the output from network canvas
-                    sex_high = recode(sex_under_influence, "y_anal_vaginal" = "Y - Yes, Anal or Vaginal intercourse (with or without oral sex) [YAV]",
-                                        "y_oral" = "O - Oral sex only [O]", "n" = "N - No [N]")) %>%
+                    sex_high = case_when(sex_under_influence_anal==TRUE | sex_under_influence_oral==TRUE~ "Y - Yes, Anal or Vaginal intercourse (with or without oral sex) [YAV]",
+                                         sex_under_influence_oral == TRUE & sex_under_influence_anal==FALSE & sex_under_influence_vaginal==FALSE~ "O - Oral sex only [O]",
+                                         TRUE ~ "N - No [N]")) %>%
         # this mutate_at recodes all of the ego level drug use variables from Network Canvas's output
         # (false/true) to CHIMS's version (N - No/Y - Yes)
         dplyr::mutate_at(vars("drug_use","alcohol_use","drug_specific_crack","drug_specific_cocaine",
@@ -87,11 +88,11 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                            "bar_specific_1","bar_specific_2","bar_specific_3","bar_specific_4",
                            "bar_specific_5","bar_specific_6","bar_specific_7","internet_specific_1",
                            "internet_specific_2","internet_specific_3","internet_specific_4",
-                           "internet_specific_5","internet_specific_6","internet_specific_7","drug_use_partner",
+                           "internet_specific_5","internet_specific_6","internet_specific_7","ego_injection_drug_partner",
                            "HIV_positive","partner_sex_role_bottom","partner_sex_role_top",
-                           "partner_sex_role_vers","partner_sex_type_female_anal",
-                           "partner_sex_type_female_oral","partner_sex_type_female_vaginal",
-                           "partner_sex_type_male_anal","partner_sex_type_male_oral","partner_type_spouse"),
+                           "partner_sex_role_vers","partner_sex_type_anal",
+                           "partner_sex_type_oral","partner_sex_type_vaginal",
+                           "partner_type_spouse"),
                          ~recode(., `false`= FALSE, `true` = TRUE, .default = NA))
     # create a bunch of variables for CHIMS based on the person_attr data
     person_attr <- person_attr %>%
@@ -101,13 +102,13 @@ data_cleaning <- function(indat,interviewperiod = 12) {
             ### not sure how to use "benefit_from_test" variable in person_attr - there's a dropdown in 
             ### contact's referral basis that is "A3 - Associate - anyone else who would benefit from an exam" and
             ### "S3 - Suspect - anyone else who would benefit from an exam"
-            contact_basis = case_when(sex_partner==TRUE & is.na(drug_use_partner) ~ "P1 - Sex partner [P1]",
-                                         drug_use_partner==TRUE & is.na(sex_partner) ~ "P2 - Needle sharing partner [P2]",
-                                         sex_partner==TRUE & drug_use_partner==TRUE ~ "P3 - Both sex and needle sharing partner [P3]",
+            contact_basis = case_when(sex_partner==TRUE & is.na(ego_injection_drug_partner) ~ "P1 - Sex partner [P1]",
+                                         ego_injection_drug_partner==TRUE & is.na(sex_partner) ~ "P2 - Needle sharing partner [P2]",
+                                         sex_partner==TRUE & ego_injection_drug_partner==TRUE ~ "P3 - Both sex and needle sharing partner [P3]",
                                          TRUE ~ NA_character_),
             # recode the spouse variable to be consistent with CHIMS
             spouse = ifelse(partner_type_spouse==TRUE, "Yes [YES]", "No [NO]"),
-            # recode partner's gender to eb consistent with CHIMS
+            # recode partner's gender to be consistent with CHIMS
             gender = case_when(gender_cis_male==TRUE ~ "Male [MALE]",
                                   gender_cis_female==TRUE ~ "Female [FEMALE]",
                                   gender_trans_female==TRUE ~ "Transgender MTF [MTF]",
@@ -166,51 +167,51 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                   # has had sex w/ a cis female partner and type of sex - "Had sex with a female during the interview period?"
                   # i assumed that because they separate out transgender partners, that when they ask about
                   # male and female partners they're only asking about cis partners - might be worth confirming
-                  sexw_cisf = case_when(sum(partner_sex_type_female_anal & gender_cis_female)>=1 |
-                                         sum(partner_sex_type_female_vaginal & gender_cis_female)>=1 ~ 
+                  sexw_cisf = case_when(sum(partner_sex_type_anal & gender_cis_female)>=1 |
+                                         sum(partner_sex_type_vaginal & gender_cis_female)>=1 ~ 
                                             "Y - Yes, Anal or Vaginal Intercourse (with or without oral sex) [YAV]",
-                                        sum(partner_sex_type_female_oral & gender_cis_female)>=1 ~ "O - Oral sex only [O]",
+                                        sum(partner_sex_type_oral & gender_cis_female)>=1 ~ "O - Oral sex only [O]",
                                         TRUE ~ "N - No [N]"),
                   # these three variables - anal_cisf, vag_cisf, oral_cisf are created to be concatenated below
                   # into cisf_sextype
-                  anal_cisf = ifelse(sum(partner_sex_type_female_anal & gender_cis_female)>=1,"A - Anal [A]",""),
-                  vag_cisf = ifelse(sum(partner_sex_type_female_vaginal & gender_cis_female)>=1,"V - Vaginal [V]",""),
-                  oral_cisf = ifelse(sum(partner_sex_type_female_oral & gender_cis_female)>=1,"O - Oral [O]",""),
+                  anal_cisf = ifelse(sum(partner_sex_type_anal & gender_cis_female)>=1,"A - Anal [A]",""),
+                  vag_cisf = ifelse(sum(partner_sex_type_vaginal & gender_cis_female)>=1,"V - Vaginal [V]",""),
+                  oral_cisf = ifelse(sum(partner_sex_type_oral & gender_cis_female)>=1,"O - Oral [O]",""),
                   # the next few variables are analagous for cis male, transgender, and anonymous partners as the above for cis female
                   # cis male partners
-                  sexw_cism = case_when(sum(partner_sex_type_male_anal & gender_cis_male)>=1 ~ 
+                  sexw_cism = case_when(sum(partner_sex_type_anal & gender_cis_male)>=1 ~ 
                                             "Y - Yes, Anal Intercourse (with or without oral sex) [YAV]",
-                                        sum(partner_sex_type_male_oral & gender_cis_male)>=1 ~ "O - Oral sex only [O]",
+                                        sum(partner_sex_type_oral & gender_cis_male)>=1 ~ "O - Oral sex only [O]",
                                         TRUE ~ "N - No [N]"),
-                  anal_cism = ifelse(sum(partner_sex_type_male_anal & gender_cis_male)>=1,"A - Anal [A]",""),
-                  oral_cism = ifelse(sum(partner_sex_type_male_oral & gender_cis_male)>=1,"O - Oral [O]",""),
+                  anal_cism = ifelse(sum(partner_sex_type_anal & gender_cis_male)>=1,"A - Anal [A]",""),
+                  oral_cism = ifelse(sum(partner_sex_type_oral & gender_cis_male)>=1,"O - Oral [O]",""),
                   # transgender partners
-                  sexw_transg = case_when(sum(partner_sex_type_female_anal & gender_trans_female)>=1 |
-                                              sum(partner_sex_type_female_vaginal & gender_trans_female)>=1 |
-                                              sum(partner_sex_type_male_anal & gender_trans_male)>=1 ~ 
+                  sexw_transg = case_when(sum(partner_sex_type_anal & gender_trans_female)>=1 |
+                                              sum(partner_sex_type_vaginal & gender_trans_female)>=1 |
+                                              sum(partner_sex_type_anal & gender_trans_male)>=1 ~ 
                                               "Y - Yes, Anal or Vaginal Intercourse (with or without oral sex) [YAV]",
-                                          sum(partner_sex_type_female_oral & gender_cis_female)>=1 |
-                                              sum(partner_sex_type_male_oral & gender_trans_male)>=1 ~ "O - Oral sex only [O]",
+                                          sum(partner_sex_type_oral & gender_cis_female)>=1 |
+                                              sum(partner_sex_type_oral & gender_trans_male)>=1 ~ "O - Oral sex only [O]",
                                           TRUE ~ "N - No [N]"),
-                  anal_transg = ifelse(sum(partner_sex_type_male_anal & gender_trans_male)>=1 |
-                                           sum(partner_sex_type_female_anal & gender_trans_female)>=1,"A - Anal [A]",""),
-                  vag_transg = ifelse(sum(partner_sex_type_female_vaginal & gender_trans_female)>=1, "V - Vaginal [V]",""),
-                  oral_transg = ifelse(sum(partner_sex_type_male_oral & gender_trans_male)>=1 |
-                                           sum(partner_sex_type_female_oral & gender_trans_female)>=1,"O - Oral [O]"),
+                  anal_transg = ifelse(sum(partner_sex_type_anal & gender_trans_male)>=1 |
+                                           sum(partner_sex_type_anal & gender_trans_female)>=1,"A - Anal [A]",""),
+                  vag_transg = ifelse(sum(partner_sex_type_vaginal & gender_trans_female)>=1, "V - Vaginal [V]",""),
+                  oral_transg = ifelse(sum(partner_sex_type_oral & gender_trans_male)>=1 |
+                                           sum(partner_sex_type_oral & gender_trans_female)>=1,"O - Oral [O]", ""),
                   # anonymous partners
-                  sexw_anon = case_when(sum(partner_sex_type_female_anal & partner_type_anon)>=1 |
-                                            sum(partner_sex_type_female_vaginal & partner_type_anon)>=1 |
-                                            sum(partner_sex_type_male_anal & partner_type_anon)>=1 ~
+                  sexw_anon = case_when(sum(partner_sex_type_anal & partner_type_anon)>=1 |
+                                            sum(partner_sex_type_vaginal & partner_type_anon)>=1 |
+                                            sum(partner_sex_type_anal & partner_type_anon)>=1 ~
                                             "Y - Yes, Anal or Vaginal intercourse (with or without oral sex) [YAV]",
-                                        sum(partner_sex_type_female_oral & partner_type_anon)>=1 |
-                                            sum(partner_sex_type_male_oral & partner_type_anon)>=1 ~ 
+                                        sum(partner_sex_type_oral & partner_type_anon)>=1 |
+                                            sum(partner_sex_type_oral & partner_type_anon)>=1 ~ 
                                             "O - Oral sex only [O]",
                                         TRUE ~ "N - No [N]"),
-                  anal_anon = ifelse(sum(partner_sex_type_male_anal & partner_type_anon)>=1 |
-                                         sum(partner_sex_type_female_anal & partner_type_anon)>=1,"A - Anal [A]",""),
-                  vag_anon = ifelse(sum(partner_sex_type_female_vaginal & partner_type_anon)>=1,"V - Vaginal [V]",""),
-                  oral_anon = ifelse(sum(partner_sex_type_female_oral & partner_type_anon)>=1 |
-                                         sum(partner_sex_type_male_oral & partner_type_anon)>=1, "O - Oral [O]",""),
+                  anal_anon = ifelse(sum(partner_sex_type_anal & partner_type_anon)>=1 |
+                                         sum(partner_sex_type_anal & partner_type_anon)>=1,"A - Anal [A]",""),
+                  vag_anon = ifelse(sum(partner_sex_type_vaginal & partner_type_anon)>=1,"V - Vaginal [V]",""),
+                  oral_anon = ifelse(sum(partner_sex_type_oral & partner_type_anon)>=1 |
+                                         sum(partner_sex_type_oral & partner_type_anon)>=1, "O - Oral [O]",""),
                   # these variables (n_) total the number of cis female, male, transgender, and anonymous partners
                   # in the previous 12 months
                   n_cisf = sum(gender_cis_female==TRUE & sex_partner==TRUE,na.rm=TRUE),
