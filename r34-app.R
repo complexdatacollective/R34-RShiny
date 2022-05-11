@@ -6,7 +6,6 @@ if (!require(dplyr)) install.packages("dplyr")
 if(!require(DT)) install.packages("DT")
 if(!require(rclipboard)) install.packages("rclipboard")
 
-
 #load libraries
 library(shiny); library(dplyr); library(DT); library(rclipboard)
 
@@ -50,18 +49,29 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
              )
                  
     ),
+    tabPanel(title = "Venues",
+             value = "Venues",
+             h3("Venues"),
+             fluidRow(
+               rclipboardSetup(),
+               column(3,
+                      # another navigation button
+                      actionButton('jumpToData','Previous',width='200px')),
+               column(3,
+                      # another navigation button
+                      actionButton('jumpToSex12m','Next',width='200px'))
+             ),
+             br()
+    ),
     navbarMenu("Sexual behavior",
                    tabPanel(title = "Within Interview Period",
                             value = "interview",
                             h3("Sexual Behavior Within Interview Period"),
                             fluidRow(
-                                # NEEDS TO HAVE SOME DATA OUTPUTTED HERE
-                                column(3,
-                                       # another navigation button
-                                       actionButton('jumpToData','Previous',width='200px')),
-                                column(3,
-                                       # another navigation button
-                                       actionButton('jumpToSex12m','Next',width='200px'))
+                                rclipboardSetup(),
+                                column(12,
+                                       # output our datatable w/venues
+                                       DT::dataTableOutput("venues")),
                             )
                             
                    ),
@@ -243,6 +253,31 @@ server <- function(input, output) {
       return(data)
   })
   
+  #Venues table
+  output$venues <- renderDT({
+    req(input$all_data)
+    
+    data <- graph_dat()$venues
+    data$Copy <- unlist(lapply(data$Responses,
+                               function(x) {
+                                 rclipButton(
+                                   inputId = "clipbtn",
+                                   label = "Copy",
+                                   clipText = x,
+                                   icon = icon("clipboard")
+                                 ) %>% as.character()
+                               }))
+    
+    data <-   DT::datatable(data,
+                            options = list(pageLength = 25),
+                            class = "cell-border stripe",
+                            rownames = FALSE,
+                            # caption = "Venues",
+                            escape = FALSE)
+    
+    return(data)
+  })
+  
   # These are all of the observeEvents for the navigation buttons
   # tell us that when someone has clicked on the different buttons, which
   # page do they want to move to (the "selected" argument) - these names
@@ -350,9 +385,6 @@ shinyApp(ui, server)
 #         re-answering the CHIMS questions based on those first & last dates of sex
 #       - the way the HBH team want to have the interview period entered is to have a dropdown/fill in
 #         for the data enterer to fill in the Shiny, then have the R code automatically update accordingly
-# - add a venue section 
-#       - check through CHIMS Model_Print_xlsx to figure out which venue variables need to be
-#         outputted
 # - make the question sections collapsible? and automatically collapse no's 
 #       - errors out even in example code...: (https://www.rdocumentation.org/packages/shinydashboardPlus/versions/0.8.0.9000/topics/accordion)
 #       - might need to be built into the context of a dashboard...: (https://cran.r-project.org/web/packages/bs4Dash/vignettes/extra-elements.html)

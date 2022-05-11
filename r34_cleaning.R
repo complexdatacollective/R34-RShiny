@@ -385,7 +385,18 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     
     contact_referral <- data.frame(Questions = contact_referralqs,
                                    contact_referralind)
-
+    
+    
+    #same process for venues
+    #may need to add "Other Venue" question
+    
+    venues_qs <- c("Venue Type", "Venue", "Activity")
+    
+    venues_ind <- rbind(venue_attr$type, venue_attr$name, venue_attr$name)
+    
+    venues <- data.frame(Questions = venues_qs,
+                         venues_ind)
+    
     
     # Now make a list of all of those datasets for us to be able to use in the Shiny app
     alldat <- list(egodat = egodat, person_attr = person_attr,
