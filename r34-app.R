@@ -376,10 +376,9 @@ shinyApp(ui, server)
 
 ### TO DO:
 # - update based on the new version of outputs:
-#       - output a dummy set a responses (I did this by hand, there's a way to automate it but it seemed to not work for Johs)
-#       - check which variables still exist and see if coding for any of them have changed
+#       - check which variables still exist and see if coding for any of them have changed (specifically venues section)
 #       - check if any additional CHIMS variables for the sections we have filled in can be added (there should definitely
-#         be some for the Contacts section, likely several others)
+#         be some for the Contacts section)
 # - create the "interview period" table for sexual behavior
 #       - this will involve checking the first & last sex dates of the partnership and then
 #         re-answering the CHIMS questions based on those first & last dates of sex
