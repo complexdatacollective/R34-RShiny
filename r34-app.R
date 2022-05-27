@@ -54,6 +54,9 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
              h3("Venues"),
              fluidRow(
                rclipboardSetup(),
+               column(12,
+                      # output our datatable w/venues
+                      DT::dataTableOutput("venues")),
                column(3,
                       # another navigation button
                       actionButton('jumpToData','Previous',width='200px')),
@@ -68,11 +71,14 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                             value = "interview",
                             h3("Sexual Behavior Within Interview Period"),
                             fluidRow(
-                                rclipboardSetup(),
-                                column(12,
-                                       # output our datatable w/venues
-                                       DT::dataTableOutput("venues")),
-                            )
+                              rclipboardSetup(),
+                              column(3,
+                                     # another navigation button
+                                     actionButton('jumpToData','Previous',width='200px')),
+                              column(3,
+                                     # another navigation button
+                                     actionButton('jumpToSex12m','Next',width='200px'))
+                            ),
                             
                    ),
                    tabPanel("Within 12 months",value = "12m",

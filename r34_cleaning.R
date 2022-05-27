@@ -52,6 +52,17 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                     # recoding the network canvas options to match CHIMS
                     role = recode(role_self, "top" = "I - Insertive [I]", "bottom" = "R - Receptive [R]",
                                     "vers" = "B - Both [B]"),
+                    # exchanged_sex answers the CHIMS q "Exchanged drugs/money/goods for sex in past 12 months"
+                    # recodes network canvas output
+                    exchanged_sex = case_when(sex_type_exchange_anal==TRUE | sex_type_exchange_vaginal==TRUE~ "Y - Yes, Anal or Vaginal intercourse (with or without oral sex) [YAV]",
+                                              sex_type_exchange_oral == TRUE & sex_type_exchange_anal==FALSE & sex_type_exchange_vaginal==FALSE~ "O - Oral sex only [O]",
+                                         TRUE ~ "N - No [N]"),
+                    # exch_sex_anal, exch_sex_vaginal, exch_sex_oral are created
+                    # to be pasted together below in exch_sextype which is to fill in:
+                    # "Type of sex exchanged"
+                    exch_sex_anal = ifelse(sex_type_exchange_anal == TRUE, "A - Anal [A]",""),
+                    exch_sex_vaginal = ifelse(sex_type_exchange_vaginal == TRUE , "V - Vaginal [V]",""),
+                    exch_sex_oral = ifelse(sex_type_exchange_oral == TRUE, "O - Oral [O]",""),
                     # sex_high answers the CHIMS q "Had sex while intoxicated or high on drugs during the interview period?"
                     # recodes the output from network canvas
                     sex_high = case_when(sex_under_influence_anal==TRUE | sex_under_influence_oral==TRUE~ "Y - Yes, Anal or Vaginal intercourse (with or without oral sex) [YAV]",
@@ -69,7 +80,9 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     # this is the best way I could find to collapse and paste a comma only when not blank
     egodat$condoms_sextype12m <- apply(cbind(egodat$condoms_anal12m,egodat$condoms_vaginal12m,egodat$condoms_oral12m),1,
                                        function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
-    
+    # creates the pasted together version of the three exchanged sex by type of sex questions created above
+    egodat$exch_sextype<- apply(cbind(egodat$exch_sex_anal,egodat$exch_sex_vaginal,egodat$exch_sex_oral),1,
+                                       function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     
     
     # Read in and clean the person attribute data - this has the attributes for sexual partner alters
@@ -317,8 +330,8 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                         "",allpartners_dat$sexw_transg,allpartners_dat$transg_sextype,allpartners_dat$n_trans,
                         allpartners_dat$sexw_anon,allpartners_dat$anon_sextype,allpartners_dat$n_anon,
                         egodat$condoms12m, egodat$condoms_sextype12m, egodat$condoms12m_pos,
-                        egodat$sex_high,"",
-                        "","","","","","","","","",allpartners_dat$sexw_hivpos,allpartners_dat$hivpos_gender,
+                        egodat$sex_high,"",egodat$exchanged_sex,egodat$exch_sextype,"","","","","","","",
+                        allpartners_dat$sexw_hivpos,allpartners_dat$hivpos_gender,
                         # FOR ANY ONLINE PARTNERS COULD ALSO USE person_attr$internet_specific1 etc
                         venue_summary$any_online)
     
@@ -400,7 +413,7 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     
     # Now make a list of all of those datasets for us to be able to use in the Shiny app
     alldat <- list(egodat = egodat, person_attr = person_attr,
-                   venue_attr = venue_attr, sex_edgelist = sex_edgelist,
+                   venues = venues, sex_edgelist = sex_edgelist,
                    know_edgelist = know_edgelist, needles_edgelist = needles_edgelist,
                    sexbehav12m = sexbehav12m,druguse12m = druguse12m,
                    contact_referral = contact_referral)
