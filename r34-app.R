@@ -77,6 +77,14 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                             h3("Sexual Behavior Within Interview Period"),
                             fluidRow(
                               rclipboardSetup(),
+                              column(12, 
+                                     # this selectInput allows people to choose which interview period
+                                     # the data will be displayed for 
+                                     selectInput('IP','Interview Period:',
+                                                 choices = list("90 days", "6.5 months"))),
+                              column(12,
+                                     # output our datatable w/sexual behaviour in selected interview period
+                                     DT::dataTableOutput("sexbehavIP")),
                               column(3,
                                      # another navigation button
                                      actionButton('jumpToVenues','Previous',width='200px')),
@@ -116,6 +124,15 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                         h3("Substance Use Within Interview Period"),
                         fluidRow(
                             # NEEDS TO HAVE SOME DATA OUTPUTTED HERE
+                            rclipboardSetup(),
+                            column(12, 
+                                   # this selectInput allows people to choose which interview period
+                                   # the data will be displayed for 
+                                   selectInput('IP','Interview Period:',
+                                               choices = list("90 days", "6.5 months"))),
+                            column(12,
+                                   # output our datatable w substance use in selected interview period
+                                   DT::dataTableOutput("druguseIP")),
                             column(3,
                                    # another navigation button
                                    actionButton('jumpBackToSex12m','Previous',width='200px')),
@@ -239,6 +256,54 @@ server <- function(input, output) {
       return(data)
   })
   
+  # data table with sexual behavior for interview period
+  # determines which interview period was selected and renders the corresponding table
+  output$sexbehavIP <- renderDT({
+    req(input$all_data)
+    
+    #if statement, if choice is 90 days, render 90 days, etc
+    
+    if (input$IP == "90 days") {
+      data <- graph_dat()$sexbehav12m
+    }
+    if (input$IP == "6.5 months"){
+      data <- graph_dat()$sexbehav12m
+    }
+    
+    # add a column with a "Copy" button - this is super finnicky and I don't
+    # understand how the rclipButton function works - I guess it's outputting
+    # HTML for the clip button, and then because we use "escape=FALSE" below
+    # that HTML gets rendered into a clip button...
+    data$Copy <- unlist(lapply(data$Responses,
+                               function(x) {
+                                 rclipButton(
+                                   # not sure what this does
+                                   inputId = "clipbtn",
+                                   # the button will say "Copy" on it
+                                   label = "Copy",
+                                   # text that's getting copied is data$Responses
+                                   clipText = x,
+                                   # there'll be a little picture of a clipboard
+                                   icon = icon("clipboard")
+                                 ) %>% as.character()
+                               }))
+    
+    data <-   DT::datatable(data,
+                            # this tells us how many things in the table we want to have
+                            # on a single page, could fiddle with this instead of 25
+                            options = list(pageLength = 25),
+                            # this is just an appearance thing
+                            class = "cell-border stripe",
+                            # turn off rownames
+                            rownames = FALSE,
+                            # Need "escape = FALSE" to render the HTML for the clip button
+                            # correctly
+                            escape = FALSE)
+    
+    return(data)
+  })
+  
+  
   # This one is basically identical to the sexbehav12m one but for druguse12m
   output$druguse12m <- renderDT({
       req(input$all_data)
@@ -262,6 +327,47 @@ server <- function(input, output) {
                               escape = FALSE)
       
       return(data)
+  })
+  
+  # data table with drug use for interview period
+  # determines which interview period was selected and renders the corresponding table
+  output$druguseIP <- renderDT({
+    req(input$all_data)
+    
+    if (input$IP == "90 days") {
+      data <- graph_dat()$druguse12m
+    }
+    if (input$IP == "6.5 months"){
+      data <- graph_dat()$druguse12m
+    }
+    
+    data$Copy <- unlist(lapply(data$Responses,
+                               function(x) {
+                                 rclipButton(
+                                   # not sure what this does
+                                   inputId = "clipbtn",
+                                   # the button will say "Copy" on it
+                                   label = "Copy",
+                                   # text that's getting copied is data$Responses
+                                   clipText = x,
+                                   # there'll be a little picture of a clipboard
+                                   icon = icon("clipboard")
+                                 ) %>% as.character()
+                               }))
+    
+    data <-   DT::datatable(data,
+                            # this tells us how many things in the table we want to have
+                            # on a single page, could fiddle with this instead of 25
+                            options = list(pageLength = 25),
+                            # this is just an appearance thing
+                            class = "cell-border stripe",
+                            # turn off rownames
+                            rownames = FALSE,
+                            # Need "escape = FALSE" to render the HTML for the clip button
+                            # correctly
+                            escape = FALSE)
+    
+    return(data)
   })
   
   
@@ -335,6 +441,7 @@ server <- function(input, output) {
   observe({
     updateSelectInput(inputId="Venues", choices = 1:(ncol(graph_dat()$venues)-1))
   }) 
+  
   
   # This table is similar to the sexbehav12m and druguse12m but adds in needing to figure out
   # which referral we want to be displaying data for
