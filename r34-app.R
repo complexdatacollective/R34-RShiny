@@ -50,10 +50,15 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                  
     ),
     tabPanel(title = "Venues",
-             value = "Venues",
+             value = "venues",
              h3("Venues"),
              fluidRow(
                rclipboardSetup(),
+               column(12, 
+                      # this selectInput allows people to choose which contact
+                      # the data will be displayed for - choices here gets updated
+                      # using the observe in the server function
+                      selectInput('Venues','Venues:',choices = 1)),
                column(12,
                       # output our datatable w/venues
                       DT::dataTableOutput("venues")),
@@ -62,7 +67,7 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                       actionButton('jumpToData','Previous',width='200px')),
                column(3,
                       # another navigation button
-                      actionButton('jumpToSex12m','Next',width='200px'))
+                      actionButton('jumpToSexint','Next',width='200px'))
              ),
              br()
     ),
@@ -74,7 +79,7 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                               rclipboardSetup(),
                               column(3,
                                      # another navigation button
-                                     actionButton('jumpToData','Previous',width='200px')),
+                                     actionButton('jumpToVenues','Previous',width='200px')),
                               column(3,
                                      # another navigation button
                                      actionButton('jumpToSex12m','Next',width='200px'))
@@ -259,30 +264,6 @@ server <- function(input, output) {
       return(data)
   })
   
-  #Venues table
-  output$venues <- renderDT({
-    req(input$all_data)
-    
-    data <- graph_dat()$venues
-    data$Copy <- unlist(lapply(data$Responses,
-                               function(x) {
-                                 rclipButton(
-                                   inputId = "clipbtn",
-                                   label = "Copy",
-                                   clipText = x,
-                                   icon = icon("clipboard")
-                                 ) %>% as.character()
-                               }))
-    
-    data <-   DT::datatable(data,
-                            options = list(pageLength = 25),
-                            class = "cell-border stripe",
-                            rownames = FALSE,
-                            # caption = "Venues",
-                            escape = FALSE)
-    
-    return(data)
-  })
   
   # These are all of the observeEvents for the navigation buttons
   # tell us that when someone has clicked on the different buttons, which
@@ -296,6 +277,11 @@ server <- function(input, output) {
   observeEvent(input$jumpToData, {
       updateNavbarPage(inputId = "navpage",
                        selected = "Data")
+  })
+  
+  observeEvent(input$jumpToVenues, {
+    updateNavbarPage(inputId= "venues",
+                     selected = "venues")
   })
   
   observeEvent(input$jumpToSex12m, {
@@ -343,6 +329,12 @@ server <- function(input, output) {
   observe({
       updateSelectInput(inputId="Contact", choices = 1:(ncol(graph_dat()$contact_referral)-1))
   })
+ 
+  # This updates the Venues dropdown to respond to the number of venues  in the 
+  # graph_dat()$venues object (ncols-1 because first column is "Response" column)
+  observe({
+    updateSelectInput(inputId="Venues", choices = 1:(ncol(graph_dat()$venues)-1))
+  }) 
   
   # This table is similar to the sexbehav12m and druguse12m but adds in needing to figure out
   # which referral we want to be displaying data for
@@ -371,6 +363,33 @@ server <- function(input, output) {
                               escape = FALSE)
       
       return(data)
+  })
+  
+  output$venues <- renderDT({
+    req(input$all_data)
+    
+    #choosing to display venues columns 1 ("Responses" column)
+    # and as.numeric(input$Venues)+1 which is using the dropdown menu input
+    data <- graph_dat()$venues[,c(1,as.numeric(input$Venues)+1)]
+    names(data)[2] <- "Responses"
+    data$Copy <- unlist(lapply(data[,2],
+                               function(x) {
+                                 rclipButton(
+                                   inputId = "clipbtn",
+                                   label = "Copy",
+                                   clipText = x,
+                                   icon = icon("clipboard")
+                                 ) %>% as.character()
+                               }))
+    
+    data <-   DT::datatable(data,
+                            options = list(pageLength = 25),
+                            class = "cell-border stripe",
+                            rownames = FALSE,
+                            # caption = "Substance use within 12 Months",
+                            escape = FALSE)
+    
+    return(data)
   })
 
 }
