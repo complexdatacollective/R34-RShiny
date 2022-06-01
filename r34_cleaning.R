@@ -264,6 +264,19 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     venue_summary <- venue_attr %>%
         summarise(any_online = ifelse(sum(type=="app")>0,"Y - Yes","N - No"))
     
+    venue_attr <- venue_attr %>%
+        mutate(
+            
+            #recode venue_met, venue_sex, and venue_drugs to their names to be pasted together
+            met <- ifelse(venue_met=="true", "Met", ""),
+            sex <- ifelse(venue_sex=="true", "Sex", ""),
+            drugs <- ifelse(venue_drugs=="true", "Drug/needle-sharing", ""),
+            )
+    # concatenate the activities of each venue
+    # a nicely formatted string, pasted together with commas
+    venue_attr$activity <- apply(cbind(venue_attr$met,venue_attr$sex,venue_attr$drugs),1,
+                                   function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    
     # currently not using the sex_edgelist, know_edgelist, or needles_edgelist to
     # do anything
     # Read in and clean the edge list of sex partners
@@ -405,7 +418,7 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     
     venues_qs <- c("Venue Type", "Venue", "Activity")
     
-    venues_ind <- rbind(venue_attr$type, venue_attr$name, venue_attr$name)
+    venues_ind <- rbind(venue_attr$type, venue_attr$name, venue_attr$activity)
     
     venues <- data.frame(Questions = venues_qs,
                          venues_ind)
