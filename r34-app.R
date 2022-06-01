@@ -264,16 +264,13 @@ server <- function(input, output) {
     #if statement, if choice is 90 days, render 90 days, etc
     
     if (input$IP == "90 days") {
-      data <- graph_dat()$sexbehav12m
+      data <- graph_dat()$sexbehav90days
     }
     if (input$IP == "6.5 months"){
-      data <- graph_dat()$sexbehav12m
+      data <- graph_dat()$sexbehav6mo
     }
     
-    # add a column with a "Copy" button - this is super finnicky and I don't
-    # understand how the rclipButton function works - I guess it's outputting
-    # HTML for the clip button, and then because we use "escape=FALSE" below
-    # that HTML gets rendered into a clip button...
+    # add a column with a "Copy" button
     data$Copy <- unlist(lapply(data$Responses,
                                function(x) {
                                  rclipButton(
@@ -507,15 +504,6 @@ shinyApp(ui, server)
 # is this going to be hosted on a web server? if yes, need to save this as "app.R"? (or could have ui.R and server.R)
 
 ### TO DO:
-# - update based on the new version of outputs:
-#       - check which variables still exist and see if coding for any of them have changed (specifically venues section)
-#       - check if any additional CHIMS variables for the sections we have filled in can be added (there should definitely
-#         be some for the Contacts section)
-# - create the "interview period" table for sexual behavior
-#       - this will involve checking the first & last sex dates of the partnership and then
-#         re-answering the CHIMS questions based on those first & last dates of sex
-#       - the way the HBH team want to have the interview period entered is to have a dropdown/fill in
-#         for the data enterer to fill in the Shiny, then have the R code automatically update accordingly
 # - make the question sections collapsible? and automatically collapse no's 
 #       - errors out even in example code...: (https://www.rdocumentation.org/packages/shinydashboardPlus/versions/0.8.0.9000/topics/accordion)
 #       - might need to be built into the context of a dashboard...: (https://cran.r-project.org/web/packages/bs4Dash/vignettes/extra-elements.html)

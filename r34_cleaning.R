@@ -91,6 +91,7 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     person_attr_file <- filenames[grep("attributeList_Person.csv",filenames)]
     # read in the person attribute data
     person_attr <- read.csv(unz(indat,person_attr_file))
+    
     # recode a bunch of variables that were true/false as TRUE/FALSE to make them easiser to manipulate
     person_attr <- person_attr %>%
         dplyr::mutate_at(vars("sex_partner","race_white","race_black","race_asian","race_hisp",
@@ -157,8 +158,9 @@ data_cleaning <- function(indat,interviewperiod = 12) {
             white = ifelse(race_white==TRUE,"White",""),
             latinx = ifelse(race_hisp==TRUE,"Hispanic/Latino",""),
             # format the dates of first and last sex
-            first_sex = format(as.Date(first_sex), "%b %d, %Y"),
-            last_sex = format(as.Date(last_sex), "%b %d, %Y"))
+            first_sex_formatted = format(as.Date(first_sex), "%b %d, %Y"),
+            last_sex_formatted = format(as.Date(last_sex), "%b %d, %Y")
+            )
     # concatenate all of the specific venues/internet places the person was met into 
     # a nicely formatted string, pasted together with commas
     person_attr$venue_all <- apply(cbind(person_attr$bar1,person_attr$bar2,person_attr$bar3,
@@ -173,6 +175,8 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     person_attr$race <- apply(cbind(person_attr$asian,person_attr$black,person_attr$white,
                                     person_attr$latinx),1,
                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    
+    
     # Create a bunch of summary variables across each partner
     allpartners_dat <- person_attr %>%
         summarise(
@@ -236,26 +240,182 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                   # only ask if a partner is known HIV positive, not if their status is unknown, so 
                   # can't split up "No" and "Unknown"
                   sexw_hivpos = ifelse(sum(HIV_positive & sex_partner,na.rm=TRUE)>=1,"Y - Yes [Y]","No or Unknown"))
+                
+    # create subsets of person attribute data for interview periods
+    #### need to replace Sys.Date() with date of infection?
+    
+    #determines date 90 days, 6.5 months before today to establish interview period
+    date_90d <- Sys.Date() - 90
+    date_6m <- Sys.Date() - 198
+    person_attr_90d <- person_attr[person_attr$last_sex >= date_90d, ]
+    person_attr_6m <- person_attr[person_attr$last_sex >= date_6m, ]
+    
+    # Create a bunch of summary variables across each partner for 90 days interview period
+    allpartners_dat_90d <- person_attr_90d %>%
+        summarise(
+            # create a variable for CHIMS to tell us within the past 90 days whether the respondent
+            # has had sex w/ a cis female partner and type of sex - "Had sex with a female during the interview period?"
+            sexw_cisf = case_when(sum(partner_sex_type_anal & gender_cis_female)>=1 |
+                                      sum(partner_sex_type_vaginal & gender_cis_female)>=1 ~ 
+                                      "Y - Yes, Anal or Vaginal Intercourse (with or without oral sex) [YAV]",
+                                  sum(partner_sex_type_oral & gender_cis_female)>=1 ~ "O - Oral sex only [O]",
+                                  TRUE ~ "N - No [N]"),
+            # these three variables - anal_cisf, vag_cisf, oral_cisf are created to be concatenated below
+            # into cisf_sextype
+            anal_cisf = ifelse(sum(partner_sex_type_anal & gender_cis_female)>=1,"A - Anal [A]",""),
+            vag_cisf = ifelse(sum(partner_sex_type_vaginal & gender_cis_female)>=1,"V - Vaginal [V]",""),
+            oral_cisf = ifelse(sum(partner_sex_type_oral & gender_cis_female)>=1,"O - Oral [O]",""),
+            # the next few variables are analagous for cis male, transgender, and anonymous partners as the above for cis female
+            # cis male partners
+            sexw_cism = case_when(sum(partner_sex_type_anal & gender_cis_male)>=1 ~ 
+                                      "Y - Yes, Anal Intercourse (with or without oral sex) [YAV]",
+                                  sum(partner_sex_type_oral & gender_cis_male)>=1 ~ "O - Oral sex only [O]",
+                                  TRUE ~ "N - No [N]"),
+            anal_cism = ifelse(sum(partner_sex_type_anal & gender_cis_male)>=1,"A - Anal [A]",""),
+            oral_cism = ifelse(sum(partner_sex_type_oral & gender_cis_male)>=1,"O - Oral [O]",""),
+            # transgender partners
+            sexw_transg = case_when(sum(partner_sex_type_anal & gender_trans_female)>=1 |
+                                        sum(partner_sex_type_vaginal & gender_trans_female)>=1 |
+                                        sum(partner_sex_type_anal & gender_trans_male)>=1 ~ 
+                                        "Y - Yes, Anal or Vaginal Intercourse (with or without oral sex) [YAV]",
+                                    sum(partner_sex_type_oral & gender_cis_female)>=1 |
+                                        sum(partner_sex_type_oral & gender_trans_male)>=1 ~ "O - Oral sex only [O]",
+                                    TRUE ~ "N - No [N]"),
+            anal_transg = ifelse(sum(partner_sex_type_anal & gender_trans_male)>=1 |
+                                     sum(partner_sex_type_anal & gender_trans_female)>=1,"A - Anal [A]",""),
+            vag_transg = ifelse(sum(partner_sex_type_vaginal & gender_trans_female)>=1, "V - Vaginal [V]",""),
+            oral_transg = ifelse(sum(partner_sex_type_oral & gender_trans_male)>=1 |
+                                     sum(partner_sex_type_oral & gender_trans_female)>=1,"O - Oral [O]", ""),
+            # anonymous partners
+            sexw_anon = case_when(sum(partner_sex_type_anal & partner_type_anon)>=1 |
+                                      sum(partner_sex_type_vaginal & partner_type_anon)>=1 |
+                                      sum(partner_sex_type_anal & partner_type_anon)>=1 ~
+                                      "Y - Yes, Anal or Vaginal intercourse (with or without oral sex) [YAV]",
+                                  sum(partner_sex_type_oral & partner_type_anon)>=1 |
+                                      sum(partner_sex_type_oral & partner_type_anon)>=1 ~ 
+                                      "O - Oral sex only [O]",
+                                  TRUE ~ "N - No [N]"),
+            anal_anon = ifelse(sum(partner_sex_type_anal & partner_type_anon)>=1 |
+                                   sum(partner_sex_type_anal & partner_type_anon)>=1,"A - Anal [A]",""),
+            vag_anon = ifelse(sum(partner_sex_type_vaginal & partner_type_anon)>=1,"V - Vaginal [V]",""),
+            oral_anon = ifelse(sum(partner_sex_type_oral & partner_type_anon)>=1 |
+                                   sum(partner_sex_type_oral & partner_type_anon)>=1, "O - Oral [O]",""),
+            # these variables (n_) total the number of cis female, male, transgender, and anonymous partners
+            # in the previous 12 months
+            n_cisf = sum(gender_cis_female==TRUE & sex_partner==TRUE,na.rm=TRUE),
+            n_cism = sum(gender_cis_male==TRUE & sex_partner==TRUE, na.rm=TRUE),
+            n_trans = sum((gender_trans_female==TRUE | gender_trans_male==TRUE) &
+                              sex_partner==TRUE, na.rm=TRUE),
+            n_anon = sum(partner_type_anon==TRUE & sex_partner==TRUE,na.rm=TRUE),
+            # variable to answer "Had sex with a person with AIDS or documented HIV infection during the interview period?"
+            # only ask if a partner is known HIV positive, not if their status is unknown, so 
+            # can't split up "No" and "Unknown"
+            sexw_hivpos = ifelse(sum(HIV_positive & sex_partner,na.rm=TRUE)>=1,"Y - Yes [Y]","No or Unknown"),
+            met_internet = ifelse(sum(venue_met_internet==TRUE)>0,"Y - Yes","N - No"))
+    
+    # Create a bunch of summary variables across each partner for 6.5 months interview period
+    allpartners_dat_6m <- person_attr_6m %>%
+        summarise(
+            # create a variable for CHIMS to tell us within the past 6.5 months whether the respondent
+            # has had sex w/ a cis female partner and type of sex - "Had sex with a female during the interview period?"
+            sexw_cisf = case_when(sum(partner_sex_type_anal & gender_cis_female)>=1 |
+                                      sum(partner_sex_type_vaginal & gender_cis_female)>=1 ~ 
+                                      "Y - Yes, Anal or Vaginal Intercourse (with or without oral sex) [YAV]",
+                                  sum(partner_sex_type_oral & gender_cis_female)>=1 ~ "O - Oral sex only [O]",
+                                  TRUE ~ "N - No [N]"),
+            # these three variables - anal_cisf, vag_cisf, oral_cisf are created to be concatenated below
+            # into cisf_sextype
+            anal_cisf = ifelse(sum(partner_sex_type_anal & gender_cis_female)>=1,"A - Anal [A]",""),
+            vag_cisf = ifelse(sum(partner_sex_type_vaginal & gender_cis_female)>=1,"V - Vaginal [V]",""),
+            oral_cisf = ifelse(sum(partner_sex_type_oral & gender_cis_female)>=1,"O - Oral [O]",""),
+            # the next few variables are analagous for cis male, transgender, and anonymous partners as the above for cis female
+            # cis male partners
+            sexw_cism = case_when(sum(partner_sex_type_anal & gender_cis_male)>=1 ~ 
+                                      "Y - Yes, Anal Intercourse (with or without oral sex) [YAV]",
+                                  sum(partner_sex_type_oral & gender_cis_male)>=1 ~ "O - Oral sex only [O]",
+                                  TRUE ~ "N - No [N]"),
+            anal_cism = ifelse(sum(partner_sex_type_anal & gender_cis_male)>=1,"A - Anal [A]",""),
+            oral_cism = ifelse(sum(partner_sex_type_oral & gender_cis_male)>=1,"O - Oral [O]",""),
+            # transgender partners
+            sexw_transg = case_when(sum(partner_sex_type_anal & gender_trans_female)>=1 |
+                                        sum(partner_sex_type_vaginal & gender_trans_female)>=1 |
+                                        sum(partner_sex_type_anal & gender_trans_male)>=1 ~ 
+                                        "Y - Yes, Anal or Vaginal Intercourse (with or without oral sex) [YAV]",
+                                    sum(partner_sex_type_oral & gender_cis_female)>=1 |
+                                        sum(partner_sex_type_oral & gender_trans_male)>=1 ~ "O - Oral sex only [O]",
+                                    TRUE ~ "N - No [N]"),
+            anal_transg = ifelse(sum(partner_sex_type_anal & gender_trans_male)>=1 |
+                                     sum(partner_sex_type_anal & gender_trans_female)>=1,"A - Anal [A]",""),
+            vag_transg = ifelse(sum(partner_sex_type_vaginal & gender_trans_female)>=1, "V - Vaginal [V]",""),
+            oral_transg = ifelse(sum(partner_sex_type_oral & gender_trans_male)>=1 |
+                                     sum(partner_sex_type_oral & gender_trans_female)>=1,"O - Oral [O]", ""),
+            # anonymous partners
+            sexw_anon = case_when(sum(partner_sex_type_anal & partner_type_anon)>=1 |
+                                      sum(partner_sex_type_vaginal & partner_type_anon)>=1 |
+                                      sum(partner_sex_type_anal & partner_type_anon)>=1 ~
+                                      "Y - Yes, Anal or Vaginal intercourse (with or without oral sex) [YAV]",
+                                  sum(partner_sex_type_oral & partner_type_anon)>=1 |
+                                      sum(partner_sex_type_oral & partner_type_anon)>=1 ~ 
+                                      "O - Oral sex only [O]",
+                                  TRUE ~ "N - No [N]"),
+            anal_anon = ifelse(sum(partner_sex_type_anal & partner_type_anon)>=1 |
+                                   sum(partner_sex_type_anal & partner_type_anon)>=1,"A - Anal [A]",""),
+            vag_anon = ifelse(sum(partner_sex_type_vaginal & partner_type_anon)>=1,"V - Vaginal [V]",""),
+            oral_anon = ifelse(sum(partner_sex_type_oral & partner_type_anon)>=1 |
+                                   sum(partner_sex_type_oral & partner_type_anon)>=1, "O - Oral [O]",""),
+            # these variables (n_) total the number of cis female, male, transgender, and anonymous partners
+            # in the previous 12 months
+            n_cisf = sum(gender_cis_female==TRUE & sex_partner==TRUE,na.rm=TRUE),
+            n_cism = sum(gender_cis_male==TRUE & sex_partner==TRUE, na.rm=TRUE),
+            n_trans = sum((gender_trans_female==TRUE | gender_trans_male==TRUE) &
+                              sex_partner==TRUE, na.rm=TRUE),
+            n_anon = sum(partner_type_anon==TRUE & sex_partner==TRUE,na.rm=TRUE),
+            # variable to answer "Had sex with a person with AIDS or documented HIV infection during the interview period?"
+            # only ask if a partner is known HIV positive, not if their status is unknown, so 
+            # can't split up "No" and "Unknown"
+            sexw_hivpos = ifelse(sum(HIV_positive & sex_partner,na.rm=TRUE)>=1,"Y - Yes [Y]","No or Unknown"),
+            met_internet = ifelse(sum(venue_met_internet==TRUE)>0,"Y - Yes","N - No"))
+            
     
     # these variables do the nice concatenation for sex type with different gender partners, anonymous partners,
     # and HIV positive partners
     allpartners_dat$cisf_sextype <- apply(cbind(allpartners_dat$anal_cisf,allpartners_dat$vag_cisf,allpartners_dat$oral_cisf),1,
-                              function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+                                              function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     allpartners_dat$cism_sextype <- apply(cbind(allpartners_dat$anal_cism,allpartners_dat$oral_cism),1,
-                                          function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+                                              function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     allpartners_dat$transg_sextype <- apply(cbind(allpartners_dat$anal_transg,allpartners_dat$vag_transg,allpartners_dat$oral_transg),1,
-                                          function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+                                                function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     allpartners_dat$anon_sextype <- apply(cbind(allpartners_dat$anal_anon,allpartners_dat$vag_anon,allpartners_dat$oral_anon),1,
-                                            function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+                                              function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     allpartners_dat$hivpos_gender <- apply(t(person_attr$gender[person_attr$HIV_positive & person_attr$sex_partner]),1,
+                                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    
+    #same as above for 90 day interview period
+    
+    
+    allpartners_dat_90d$cisf_sextype <- apply(cbind(allpartners_dat_90d$anal_cisf,allpartners_dat_90d$vag_cisf,allpartners_dat_90d$oral_cisf),1,
+                                          function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    allpartners_dat_90d$cism_sextype <- apply(cbind(allpartners_dat_90d$anal_cism,allpartners_dat_90d$oral_cism),1,
+                                          function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    allpartners_dat_90d$transg_sextype <- apply(cbind(allpartners_dat_90d$anal_transg,allpartners_dat_90d$vag_transg,allpartners_dat_90d$oral_transg),1,
+                                            function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    allpartners_dat_90d$anon_sextype <- apply(cbind(allpartners_dat_90d$anal_anon,allpartners_dat_90d$vag_anon,allpartners_dat_90d$oral_anon),1,
+                                          function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    allpartners_dat_90d$hivpos_gender <- apply(t(person_attr_90d$gender[person_attr_90d$HIV_positive & person_attr_90d$sex_partner]),1,
                                            function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     
-
+    #same as above for 6.5 month interview period
+    allpartners_dat_6m$cisf_sextype <- apply(cbind(allpartners_dat_6m$anal_cisf,allpartners_dat_6m$vag_cisf,allpartners_dat_6m$oral_cisf),1,
+                                              function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    allpartners_dat_6m$cism_sextype <- apply(cbind(allpartners_dat_6m$anal_cism,allpartners_dat_6m$oral_cism),1,
+                                              function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    allpartners_dat_6m$transg_sextype <- apply(cbind(allpartners_dat_6m$anal_transg,allpartners_dat_6m$vag_transg,allpartners_dat_6m$oral_transg),1,
+                                                function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    allpartners_dat_6m$anon_sextype <- apply(cbind(allpartners_dat_6m$anal_anon,allpartners_dat_6m$vag_anon,allpartners_dat_6m$oral_anon),1,
+                                              function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    allpartners_dat_6m$hivpos_gender <- apply(t(person_attr_6m$gender[person_attr_6m$HIV_positive & person_attr_6m$sex_partner]),1,
+                                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     
-
-
-    
-
     # Read in and clean the venue attribute data
     # same process with the venue data
     venue_attr_file <- filenames[grep("attributeList_Venue.csv",filenames)]
@@ -348,9 +508,37 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                         # FOR ANY ONLINE PARTNERS COULD ALSO USE person_attr$internet_specific1 etc
                         venue_summary$any_online)
     
+    sexbehav90dind <- c(
+            allpartners_dat_90d$sexw_cisf,allpartners_dat_90d$cisf_sextype,allpartners_dat_90d$n_cisf,
+            allpartners_dat_90d$sexw_cism,allpartners_dat_90d$cism_sextype,egodat$role,allpartners_dat_90d$n_cism,
+            "",allpartners_dat_90d$sexw_transg,allpartners_dat_90d$transg_sextype,allpartners_dat_90d$n_trans,
+            allpartners_dat_90d$sexw_anon,allpartners_dat_90d$anon_sextype,allpartners_dat_90d$n_anon,
+            egodat$condoms12m, egodat$condoms_sextype12m, egodat$condoms12m_pos,
+            egodat$sex_high,"",egodat$exchanged_sex,egodat$exch_sextype,"","","","","","","",
+            allpartners_dat_90d$sexw_hivpos,allpartners_dat_90d$hivpos_gender,
+            allpartners_dat_90d$met_internet)
+    
+    sexbehav6mind <- c(
+        allpartners_dat_6m$sexw_cisf,allpartners_dat_6m$cisf_sextype,allpartners_dat_6m$n_cisf,
+        allpartners_dat_6m$sexw_cism,allpartners_dat_6m$cism_sextype,egodat$role,allpartners_dat_6m$n_cism,
+        "",allpartners_dat_6m$sexw_transg,allpartners_dat_6m$transg_sextype,allpartners_dat_6m$n_trans,
+        allpartners_dat_6m$sexw_anon,allpartners_dat_6m$anon_sextype,allpartners_dat_6m$n_anon,
+        egodat$condoms12m, egodat$condoms_sextype12m, egodat$condoms12m_pos,
+        egodat$sex_high,"",egodat$exchanged_sex,egodat$exch_sextype,"","","","","","","",
+        allpartners_dat_6m$sexw_hivpos,allpartners_dat_6m$hivpos_gender,
+        allpartners_dat_6m$met_internet)
+        
+    
     # put together the questions and responses for sexual behavior in the past 12 months
     sexbehav12m <- data.frame(Questions = sexbehavqs[[1]],
                               Responses = sexbehav12mind)
+    
+    # put together the questions and responses for sexual behavior in interview period
+    sexbehav90days <- data.frame(Questions = sexbehavqs[[2]],
+                                 Responses = sexbehav90dind)
+    
+    sexbehav6mo <- data.frame(Questions = sexbehavqs[[2]],
+                              Responses = sexbehav6mind)
     
     # Now go through the same process for drug use in the past 12 months
     druguseqs <- list()
@@ -406,7 +594,7 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                                  person_attr$address,
                                  "",person_attr$height,person_attr$weight,
                                  person_attr$descrip_other,person_attr$hair,person_attr$race,
-                                 person_attr$first_sex,person_attr$last_sex,
+                                 person_attr$first_sex_formatted,person_attr$last_sex_formatted,
                                  person_attr$num_times)
     
     contact_referral <- data.frame(Questions = contact_referralqs,
@@ -429,7 +617,9 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                    venues = venues, sex_edgelist = sex_edgelist,
                    know_edgelist = know_edgelist, needles_edgelist = needles_edgelist,
                    sexbehav12m = sexbehav12m,druguse12m = druguse12m,
-                   contact_referral = contact_referral)
+                   contact_referral = contact_referral,
+                   sexbehav90days = sexbehav90days,
+                   sexbehav6mo = sexbehav6mo)
     
     return(alldat)
 }
