@@ -40,7 +40,7 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                                 # the different navbarpage/menu/panels/etc
                                 # this one uses the observeEvent 'jumpToSexint"
                                 # has the text "Next" on it, and has width 200px
-                                actionButton('jumpToSexint','Next',width='200px')
+                                actionButton('jumpToVenues','Next',width='200px')
                                 ),
                               ),
                            )
@@ -383,7 +383,7 @@ server <- function(input, output) {
   })
   
   observeEvent(input$jumpToVenues, {
-    updateNavbarPage(inputId= "venues",
+    updateNavbarPage(inputId= "navpage",
                      selected = "venues")
   })
   
@@ -507,8 +507,6 @@ shinyApp(ui, server)
 # - add frequency to drug use section
 
 # - handle missing "type" of venue
-
-# - ensure nav buttons navigate to correct tab
 
 # - check for incorrect/missing data on sex behavior
 #       - 12 m 
