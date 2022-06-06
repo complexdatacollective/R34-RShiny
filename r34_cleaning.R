@@ -544,25 +544,26 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     druguseqs <- list()
     for(i in 1:length(refperiod)) {
         druguseqs[[i]] <- c(paste0("<b>Any alcohol or drug use ",refperiod[i]," (injection or non-injection)</b>"),
-                            "<b>Alcohol</b>","Frequency of use","Units",
-                            "<b>Crack</b>","Frequency of use","Units",
-                            "<b>Cocaine</b>","Frequency of use","Units",
-                            "<b>Heroin</b>","Frequency of use","Units",
-                            "<b>Methamphetamine</b>","Frequency of use","Units",
-                            "<b>Nitrates/poppers</b>","Frequency of use","Units",
-                            "<b>Erectile dysfunction medications</b>","Frequency of use","Units",
-                            "<b>Marijuana</b>","Frequency of use","Units",
-                            "<b>Other drugs</b>","Specify drug(s)","Frequency of use","Units",
+                            "<b>Alcohol</b>",
+                            "<b>Crack</b>",
+                            "<b>Cocaine</b>",
+                            "<b>Heroin</b>",
+                            "<b>Methamphetamine</b>",
+                            "<b>Nitrates/poppers</b>",
+                            "<b>Erectile dysfunction medications</b>",
+                            "<b>Marijuana</b>",
+                            "<b>Other drugs</b>","Specify drug(s)",
                             paste0("<b>Engaged in injection drug use ",refperiod[i],"</b>"),
-                            paste0("Shared injection drug equipment ",refperiod[i]))
+                            paste0("Shared injection drug equipment ",refperiod[i]),
+                            "<b>Frequency of Use</b>")
     }
     
-    druguse12mind <- c(egodat$drug_use,egodat$alcohol_use,"","",
-                       egodat$drug_specific_crack,"","",egodat$drug_specific_cocaine,
-                       "","",egodat$drug_specific_heroin,"","",egodat$drug_specific_meth,
-                       "","",egodat$drug_specific_nitrate,"","",egodat$drug_specific_erectile_dysfunciton,
-                       "","",egodat$drug_specific_marijuana,"","",egodat$drug_specific_other,
-                       "","","",egodat$injection_drug_use,"")
+    druguse12mind <- c(egodat$drug_use,egodat$alcohol_use,
+                       egodat$drug_specific_crack,egodat$drug_specific_cocaine,
+                       egodat$drug_specific_heroin,egodat$drug_specific_meth,
+                       egodat$drug_specific_nitrate,egodat$drug_specific_erectile_dysfunciton,
+                       egodat$drug_specific_marijuana,egodat$drug_specific_other,
+                       egodat$drug_other,egodat$injection_drug_use,"",egodat$drug_use_freq)
     
     druguse12m <- data.frame(Questions = druguseqs[[1]],
                               Responses = druguse12mind)

@@ -110,7 +110,7 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                                        actionButton('jumpBackToSexint','Previous',width='200px')),
                                 column(3,
                                        # another navigation button
-                                       actionButton('jumpToSubint','Next',width='200px'))
+                                       actionButton('jumpToSub12m','Next',width='200px'))
                             ),
                             # added a line break to make there be a little white space below
                             # the buttons
@@ -119,27 +119,6 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                 
                ),
     navbarMenu("Substance Use",
-               tabPanel(title = "Within Interview Period",
-                        value = "interviewsub",
-                        h3("Substance Use Within Interview Period"),
-                        fluidRow(
-                            # NEEDS TO HAVE SOME DATA OUTPUTTED HERE
-                            rclipboardSetup(),
-                            column(12, 
-                                   # this selectInput allows people to choose which interview period
-                                   # the data will be displayed for 
-                                   selectInput('IP','Interview Period:',
-                                               choices = list("90 days", "6.5 months"))),
-                            column(12,
-                                   # output our datatable w substance use in selected interview period
-                                   DT::dataTableOutput("druguseIP")),
-                            column(3,
-                                   # another navigation button
-                                   actionButton('jumpBackToSex12m','Previous',width='200px')),
-                            column(3,
-                                   # another navigation button
-                                   actionButton('jumpToSub12m','Next',width='200px'))
-                        )),
                tabPanel(title = "Within 12 months",
                         value = "12msub",
                         h3("Substance Use Within 12 months"),
@@ -151,7 +130,7 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                                    DTOutput("druguse12m")),
                             column(3,
                                    # another navigation button
-                                   actionButton('jumpBackToSubint','Previous',width='200px')),
+                                   actionButton('jumpBackToSex12m','Previous',width='200px')),
                             column(3,
                                    # another navigation button
                                    actionButton('jumpToReferrals','Next',width='200px'))
@@ -326,46 +305,7 @@ server <- function(input, output) {
       return(data)
   })
   
-  # data table with drug use for interview period
-  # determines which interview period was selected and renders the corresponding table
-  output$druguseIP <- renderDT({
-    req(input$all_data)
-    
-    if (input$IP == "90 days") {
-      data <- graph_dat()$druguse12m
-    }
-    if (input$IP == "6.5 months"){
-      data <- graph_dat()$druguse12m
-    }
-    
-    data$Copy <- unlist(lapply(data$Responses,
-                               function(x) {
-                                 rclipButton(
-                                   # not sure what this does
-                                   inputId = "clipbtn",
-                                   # the button will say "Copy" on it
-                                   label = "Copy",
-                                   # text that's getting copied is data$Responses
-                                   clipText = x,
-                                   # there'll be a little picture of a clipboard
-                                   icon = icon("clipboard")
-                                 ) %>% as.character()
-                               }))
-    
-    data <-   DT::datatable(data,
-                            # this tells us how many things in the table we want to have
-                            # on a single page, could fiddle with this instead of 25
-                            options = list(pageLength = 25),
-                            # this is just an appearance thing
-                            class = "cell-border stripe",
-                            # turn off rownames
-                            rownames = FALSE,
-                            # Need "escape = FALSE" to render the HTML for the clip button
-                            # correctly
-                            escape = FALSE)
-    
-    return(data)
-  })
+  
   
   
   # These are all of the observeEvents for the navigation buttons
