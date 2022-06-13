@@ -165,6 +165,7 @@ data_cleaning <- function(indat, interviewperiodstart, interviewperiodend) {
             black = ifelse(race_black==TRUE, "Black or African American",""),
             white = ifelse(race_white==TRUE,"White",""),
             latinx = ifelse(race_hisp==TRUE,"Hispanic/Latino",""),
+            
            
             # format the dates of first and last sex
             first_sex_formatted = format(as.Date(first_sex), "%b %d, %Y"),
@@ -184,6 +185,7 @@ data_cleaning <- function(indat, interviewperiodstart, interviewperiodend) {
     person_attr$race <- apply(cbind(person_attr$asian,person_attr$black,person_attr$white,
                                     person_attr$latinx),1,
                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+
     
     
     # Create a bunch of summary variables across each partner
