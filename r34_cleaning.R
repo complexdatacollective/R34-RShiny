@@ -165,13 +165,6 @@ data_cleaning <- function(indat, interviewperiodstart, interviewperiodend) {
             black = ifelse(race_black==TRUE, "Black or African American",""),
             white = ifelse(race_white==TRUE,"White",""),
             latinx = ifelse(race_hisp==TRUE,"Hispanic/Latino",""),
-            
-            ###uncomment race categories below and func on line 195 to make compatible with protocol v 20
-            #aian = ifelse(race_aian==TRUE, "American Indian Alaskan Native",""),
-            #nhpi = ifelse(race_nhpi=TRUE, "Native Hawaiian or Pacific Islander",""),
-            #other = ifelse(race_other=TRUE, "Other",""),
-           # unknown = ifelse(race_unknown=TRUE, "Unknown",""),
-            #refused = ifelse(race_refused=TRUE, "Refused",""),
            
             # format the dates of first and last sex
             first_sex_formatted = format(as.Date(first_sex), "%b %d, %Y"),
@@ -191,12 +184,6 @@ data_cleaning <- function(indat, interviewperiodstart, interviewperiodend) {
     person_attr$race <- apply(cbind(person_attr$asian,person_attr$black,person_attr$white,
                                     person_attr$latinx),1,
                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
-    
-    #replace above with the following to make compatible with protocol v 20
-    # person_attr$race <- apply(cbind(person_attr$asian,person_attr$black,person_attr$white,
-    #person_attr$latinx, person_attr$aian, person_attr$nhpi, 
-    #person_attr$other, person_attr$unknown, person_attr$refused),1,
-#function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     
     
     # Create a bunch of summary variables across each partner
