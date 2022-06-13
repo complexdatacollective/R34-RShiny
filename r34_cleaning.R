@@ -1,6 +1,6 @@
 
 
-data_cleaning <- function(indat,interviewperiod = 12) {
+data_cleaning <- function(indat, interviewperiodstart, interviewperiodend) {
     
     # filenames will have the file names inside of the zipped data file that you've
     # put into "indat" - so all of the various filenames coming from a network canvas
@@ -272,10 +272,8 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     #### need to replace Sys.Date() with date of infection?
     
     #determines date 90 days, 6.5 months before today to establish interview period
-    date_90d <- Sys.Date() - 90
-    date_7m <- Sys.Date() - 213
-    person_attr_90d <- person_attr[person_attr$last_sex >= date_90d, ]
-    person_attr_7m <- person_attr[person_attr$last_sex >= date_7m, ]
+    person_attr_90d <- person_attr[person_attr$last_sex >= interviewperiodstart, ]
+    person_attr_7m <- person_attr[person_attr$last_sex >= interviewperiodstart, ]
     
     # Create a bunch of summary variables across each partner for 90 days interview period
     allpartners_dat_90d <- person_attr_90d %>%
@@ -582,7 +580,7 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     
     sexbehav90dind <- c(
             allpartners_dat_90d$sexw_cisf,allpartners_dat_90d$cisf_sextype,allpartners_dat_90d$n_cisf,
-            allpartners_dat_90d$sexw_cism,allpartners_dat_90d$cism_sextype,egodat$role,allpartners_dat_90d$n_cism,
+            allpartners_dat_90d$sexw_cism,allpartners_dat_90d$cism_sextype,"",allpartners_dat_90d$n_cism,
             "",allpartners_dat_90d$sexw_transg,allpartners_dat_90d$transg_sextype,allpartners_dat_90d$n_trans,
             allpartners_dat_90d$sexw_anon,allpartners_dat_90d$anon_sextype,allpartners_dat_90d$n_anon,
             "", "", "",
@@ -592,7 +590,7 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     
     sexbehav7mind <- c(
         allpartners_dat_7m$sexw_cisf,allpartners_dat_7m$cisf_sextype,allpartners_dat_7m$n_cisf,
-        allpartners_dat_7m$sexw_cism,allpartners_dat_7m$cism_sextype,egodat$role,allpartners_dat_7m$n_cism,
+        allpartners_dat_7m$sexw_cism,allpartners_dat_7m$cism_sextype,"",allpartners_dat_7m$n_cism,
         "",allpartners_dat_7m$sexw_transg,allpartners_dat_7m$transg_sextype,allpartners_dat_7m$n_trans,
         allpartners_dat_7m$sexw_anon,allpartners_dat_7m$anon_sextype,allpartners_dat_7m$n_anon,
         "", "", "",

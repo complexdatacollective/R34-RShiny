@@ -22,11 +22,15 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                  # Sidebar panel 
                  sidebarPanel(
                      
+                     
+                     
                      # Input: Select a file 
                      fileInput("all_data", "Upload .zip File",
                                multiple = TRUE,
                                accept = c(".zip")),
+                     
                  ),
+                 
                  mainPanel(
                      # this textOuput checks that the data have been loaded correctly
                      # and the number of referral contacts included
@@ -81,9 +85,11 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                                      # this selectInput allows people to choose which interview period
                                      # the data will be displayed for 
                                      selectInput('IP','Interview Period:',
-                                                 choices = list("90 days", "7 months", "12 months"))),
-                              column(12, dateInput("date_start", "Interview period end date: ")),
-                              column(12, dateInput("date_end", "Interview period end date: ")),
+                                                 choices = list("3 months", "7 months", "12 months"))),
+                              column(12,
+                                     #select interview period start and end dates
+                                     dateInput("date_start", "Interview period start date: "),
+                                     dateInput("date_end", "Interview period end date: ")),
                               column(12,
                                      # output our datatable w/sexual behaviour in selected interview period
                                      DT::dataTableOutput("sexbehavIP")),
@@ -171,9 +177,11 @@ server <- function(input, output) {
     graph_dat <- reactive({
         
         req(input$all_data)
+        req(input$date_start)
+        req(input$date_end)
         
         # run our data_cleaning function from the r34_cleaning script
-        return(data_cleaning(input$all_data$datapath))
+        return(data_cleaning(input$all_data$datapath, input$date_start, input_date_end))
         
     }) 
     
@@ -181,6 +189,7 @@ server <- function(input, output) {
     # that it was loaded ok
     output$check_load <- renderText({
         req(input$all_data)
+        
         
         # is there something called "egodat" in our graph_dat() object?
         check1 <- "egodat" %in% names(graph_dat())
@@ -244,7 +253,7 @@ server <- function(input, output) {
     
     #if statement, if choice is 90 days, render 90 days, etc
     
-    if (input$IP == "90 days") {
+    if (input$IP == "3 months") {
       data <- graph_dat()$sexbehav90days
     }
     if (input$IP == "7 months"){
