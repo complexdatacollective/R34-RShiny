@@ -81,7 +81,9 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                                      # this selectInput allows people to choose which interview period
                                      # the data will be displayed for 
                                      selectInput('IP','Interview Period:',
-                                                 choices = list("90 days", "6.5 months"))),
+                                                 choices = list("90 days", "7 months", "12 months"))),
+                              column(12, dateInput("date_start", "Interview period end date: ")),
+                              column(12, dateInput("date_end", "Interview period end date: ")),
                               column(12,
                                      # output our datatable w/sexual behaviour in selected interview period
                                      DT::dataTableOutput("sexbehavIP")),
@@ -245,8 +247,11 @@ server <- function(input, output) {
     if (input$IP == "90 days") {
       data <- graph_dat()$sexbehav90days
     }
-    if (input$IP == "6.5 months"){
-      data <- graph_dat()$sexbehav6mo
+    if (input$IP == "7 months"){
+      data <- graph_dat()$sexbehav7mo
+    }
+    if (input$IP == "12 months"){
+      data <- graph_dat()$sexbehav12m
     }
     
     # add a column with a "Copy" button

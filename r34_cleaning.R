@@ -12,7 +12,15 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     # read in the csv for that egofile
     egodat <- read.csv(unz(indat,egofile))
     # create some ego variables relevant for sexual behavior in the past year
+    
+    # recode a bunch of variables that were true/false as TRUE/FALSE to make them easiser to manipulate
     egodat <- egodat %>%
+        dplyr::mutate_at(vars("sex_type_exchange_anal", "sex_type_exchange_vaginal", "sex_type_exchange_oral",
+                              "sex_under_influence_anal", "sex_under_influence_oral", "sex_under_influence_vaginal"),
+                         ~recode(., `false`= FALSE, `true` = TRUE, .default = NA))
+    egodat <- egodat %>%
+        
+        
         dplyr::mutate(
                     # condoms12m is to fill in the question "Had sex without using a condom during the interview period?"
                     # classifies folks' non-condom usage in the past year at an ego level,
@@ -65,7 +73,7 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                     exch_sex_oral = ifelse(sex_type_exchange_oral == TRUE, "O - Oral [O]",""),
                     # sex_high answers the CHIMS q "Had sex while intoxicated or high on drugs during the interview period?"
                     # recodes the output from network canvas
-                    sex_high = case_when(sex_under_influence_anal==TRUE | sex_under_influence_oral==TRUE~ "Y - Yes, Anal or Vaginal intercourse (with or without oral sex) [YAV]",
+                    sex_high = case_when(sex_under_influence_anal==TRUE | sex_under_influence_vaginal==TRUE~ "Y - Yes, Anal or Vaginal intercourse (with or without oral sex) [YAV]",
                                          sex_under_influence_oral == TRUE & sex_under_influence_anal==FALSE & sex_under_influence_vaginal==FALSE~ "O - Oral sex only [O]",
                                          TRUE ~ "N - No [N]")) %>%
         # this mutate_at recodes all of the ego level drug use variables from Network Canvas's output
@@ -106,7 +114,7 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                            "HIV_positive","partner_sex_role_bottom","partner_sex_role_top",
                            "partner_sex_role_vers","partner_sex_type_anal",
                            "partner_sex_type_oral","partner_sex_type_vaginal",
-                           "partner_type_spouse"),
+                           "partner_type_spouse", "injection_drug_use"),
                          ~recode(., `false`= FALSE, `true` = TRUE, .default = NA))
     # create a bunch of variables for CHIMS based on the person_attr data
     person_attr <- person_attr %>%
@@ -241,19 +249,33 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                   # can't split up "No" and "Unknown"
                   sexw_hivpos = ifelse(sum(HIV_positive & sex_partner,na.rm=TRUE)>=1,"Y - Yes [Y]","No or Unknown"),
                   
+                  #created to answer question "met partners through the internet"
+                  met_internet = ifelse(sum(venue_met_internet==TRUE)>0,"Y - Yes","N - No"),
+                  
                   #this variable created to answer "Shared injection drug equipment in past 12 months?" on substance use q package
                   shared_inj = case_when(sum(ego_injection_drug_partner==TRUE, na.rm=TRUE)>=1  ~ 
                                             "Y - Yes",
-                                        TRUE ~ "N - No"))
+                                        TRUE ~ "N - No"),
+                  
+                  #sex_with_idu created to answer "Had sex with a person who is known to be an IDU in past 12 months?"
+                  sex_with_idu = case_when(sum(injection_drug_use==TRUE, na.rm=TRUE)>=1 ~ "Y - Yes",
+                                           TRUE ~ "N - No"),
+                  
+                  #these variables are created to be concatenated below to answer question "type of sex with known idu"
+                  
+                  anal_with_idu = ifelse(sum(partner_sex_type_anal & injection_drug_use)>0,"A - Anal [A]",""),
+                  vag_with_idu = ifelse(sum(partner_sex_type_vaginal & injection_drug_use)>0, "V - Vaginal [V]",""),
+                  oral_with_idu = ifelse(sum(partner_sex_type_oral & injection_drug_use)>0,"O - Oral [O]", ""),
+                  )
                 
     # create subsets of person attribute data for interview periods
     #### need to replace Sys.Date() with date of infection?
     
     #determines date 90 days, 6.5 months before today to establish interview period
     date_90d <- Sys.Date() - 90
-    date_6m <- Sys.Date() - 198
+    date_7m <- Sys.Date() - 213
     person_attr_90d <- person_attr[person_attr$last_sex >= date_90d, ]
-    person_attr_6m <- person_attr[person_attr$last_sex >= date_6m, ]
+    person_attr_7m <- person_attr[person_attr$last_sex >= date_7m, ]
     
     # Create a bunch of summary variables across each partner for 90 days interview period
     allpartners_dat_90d <- person_attr_90d %>%
@@ -316,10 +338,20 @@ data_cleaning <- function(indat,interviewperiod = 12) {
             # only ask if a partner is known HIV positive, not if their status is unknown, so 
             # can't split up "No" and "Unknown"
             sexw_hivpos = ifelse(sum(HIV_positive & sex_partner,na.rm=TRUE)>=1,"Y - Yes [Y]","No or Unknown"),
-            met_internet = ifelse(sum(venue_met_internet==TRUE)>0,"Y - Yes","N - No"))
+            met_internet = ifelse(sum(venue_met_internet==TRUE)>0,"Y - Yes","N - No"),
+            
+            #sex_with_idu created to answer "Had sex with a person who is known to be an IDU in interview period?"
+            sex_with_idu = case_when(sum(injection_drug_use==TRUE, na.rm=TRUE)>=1 ~ "Y - Yes",
+                                     TRUE ~ "N - No"),
+            
+            #these variables are created to be concatenated below to answer question "type of sex with known idu"
+            
+            anal_with_idu = ifelse(sum(partner_sex_type_anal & injection_drug_use)>0,"A - Anal [A]",""),
+            vag_with_idu = ifelse(sum(partner_sex_type_vaginal & injection_drug_use)>0, "V - Vaginal [V]",""),
+            oral_with_idu = ifelse(sum(partner_sex_type_oral & injection_drug_use)>0,"O - Oral [O]", ""))
     
-    # Create a bunch of summary variables across each partner for 6.5 months interview period
-    allpartners_dat_6m <- person_attr_6m %>%
+    # Create a bunch of summary variables across each partner for 7 months interview period
+    allpartners_dat_7m <- person_attr_7m %>%
         summarise(
             # create a variable for CHIMS to tell us within the past 6.5 months whether the respondent
             # has had sex w/ a cis female partner and type of sex - "Had sex with a female during the interview period?"
@@ -379,7 +411,17 @@ data_cleaning <- function(indat,interviewperiod = 12) {
             # only ask if a partner is known HIV positive, not if their status is unknown, so 
             # can't split up "No" and "Unknown"
             sexw_hivpos = ifelse(sum(HIV_positive & sex_partner,na.rm=TRUE)>=1,"Y - Yes [Y]","No or Unknown"),
-            met_internet = ifelse(sum(venue_met_internet==TRUE)>0,"Y - Yes","N - No"))
+            met_internet = ifelse(sum(venue_met_internet==TRUE)>0,"Y - Yes","N - No"),
+            
+            #sex_with_idu created to answer "Had sex with a person who is known to be an IDU in interview period?"
+            sex_with_idu = case_when(sum(injection_drug_use==TRUE, na.rm=TRUE)>=1 ~ "Y - Yes",
+                                     TRUE ~ "N - No"),
+            
+            #these variables are created to be concatenated below to answer question "type of sex with known idu"
+            
+            anal_with_idu = ifelse(sum(partner_sex_type_anal & injection_drug_use)>0,"A - Anal [A]",""),
+            vag_with_idu = ifelse(sum(partner_sex_type_vaginal & injection_drug_use)>0, "V - Vaginal [V]",""),
+            oral_with_idu = ifelse(sum(partner_sex_type_oral & injection_drug_use)>0,"O - Oral [O]", ""))
             
     
     # these variables do the nice concatenation for sex type with different gender partners, anonymous partners,
@@ -395,6 +437,9 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     allpartners_dat$hivpos_gender <- apply(t(person_attr$gender[person_attr$HIV_positive & person_attr$sex_partner]),1,
                                                function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     
+    allpartners_dat$sex_type_with_idu <- apply(cbind(allpartners_dat$anal_with_idu,allpartners_dat$vag_with_idu,allpartners_dat$oral_with_idu),1,
+                                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    
     #same as above for 90 day interview period
     
     
@@ -408,17 +453,21 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                                           function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     allpartners_dat_90d$hivpos_gender <- apply(t(person_attr_90d$gender[person_attr_90d$HIV_positive & person_attr_90d$sex_partner]),1,
                                            function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    allpartners_dat_90d$sex_type_with_idu <- apply(cbind(allpartners_dat_90d$anal_with_idu,allpartners_dat_90d$vag_with_idu,allpartners_dat_90d$oral_with_idu),1,
+                                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     
-    #same as above for 6.5 month interview period
-    allpartners_dat_6m$cisf_sextype <- apply(cbind(allpartners_dat_6m$anal_cisf,allpartners_dat_6m$vag_cisf,allpartners_dat_6m$oral_cisf),1,
+    #same as above for 7 month interview period
+    allpartners_dat_7m$cisf_sextype <- apply(cbind(allpartners_dat_7m$anal_cisf,allpartners_dat_7m$vag_cisf,allpartners_dat_7m$oral_cisf),1,
                                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
-    allpartners_dat_6m$cism_sextype <- apply(cbind(allpartners_dat_6m$anal_cism,allpartners_dat_6m$oral_cism),1,
+    allpartners_dat_7m$cism_sextype <- apply(cbind(allpartners_dat_7m$anal_cism,allpartners_dat_7m$oral_cism),1,
                                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
-    allpartners_dat_6m$transg_sextype <- apply(cbind(allpartners_dat_6m$anal_transg,allpartners_dat_6m$vag_transg,allpartners_dat_6m$oral_transg),1,
+    allpartners_dat_7m$transg_sextype <- apply(cbind(allpartners_dat_7m$anal_transg,allpartners_dat_7m$vag_transg,allpartners_dat_7m$oral_transg),1,
                                                 function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
-    allpartners_dat_6m$anon_sextype <- apply(cbind(allpartners_dat_6m$anal_anon,allpartners_dat_6m$vag_anon,allpartners_dat_6m$oral_anon),1,
+    allpartners_dat_7m$anon_sextype <- apply(cbind(allpartners_dat_7m$anal_anon,allpartners_dat_7m$vag_anon,allpartners_dat_7m$oral_anon),1,
                                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
-    allpartners_dat_6m$hivpos_gender <- apply(t(person_attr_6m$gender[person_attr_6m$HIV_positive & person_attr_6m$sex_partner]),1,
+    allpartners_dat_7m$hivpos_gender <- apply(t(person_attr_7m$gender[person_attr_7m$HIV_positive & person_attr_7m$sex_partner]),1,
+                                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
+    allpartners_dat_7m$sex_type_with_idu <- apply(cbind(allpartners_dat_7m$anal_with_idu,allpartners_dat_7m$vag_with_idu,allpartners_dat_7m$oral_with_idu),1,
                                                function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     
     # Read in and clean the venue attribute data
@@ -520,37 +569,36 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     # This is a super clunky way to do this, but basically looking at the list of questions
     # from CHIMS in the sexbehavqs object, and putting the outputs from the different datasets we've created above
     # in the order that these questions are - pretty finnicky so probably good to triple check when editing!
-    sexbehav12mind <- c(# A bunch of these outputs can't be filled yet because data collection not consistent
-                        # with CHIMS... 
+    sexbehav12mind <- c(
                         allpartners_dat$sexw_cisf,allpartners_dat$cisf_sextype,allpartners_dat$n_cisf,
                         allpartners_dat$sexw_cism,allpartners_dat$cism_sextype,egodat$role,allpartners_dat$n_cism,
                         "",allpartners_dat$sexw_transg,allpartners_dat$transg_sextype,allpartners_dat$n_trans,
                         allpartners_dat$sexw_anon,allpartners_dat$anon_sextype,allpartners_dat$n_anon,
                         egodat$condoms12m, egodat$condoms_sextype12m, egodat$condoms12m_pos,
-                        egodat$sex_high,"",egodat$exchanged_sex,egodat$exch_sextype,"","","","","","","",
+                        egodat$sex_high,"",egodat$exchanged_sex,egodat$exch_sextype,"","","",allpartners_dat$sex_with_idu,
+                        allpartners_dat$sex_type_with_idu,"","",
                         allpartners_dat$sexw_hivpos,allpartners_dat$hivpos_gender,
-                        # FOR ANY ONLINE PARTNERS COULD ALSO USE person_attr$internet_specific1 etc
-                        venue_summary$any_online)
+                        allpartners_dat$met_internet)
     
     sexbehav90dind <- c(
             allpartners_dat_90d$sexw_cisf,allpartners_dat_90d$cisf_sextype,allpartners_dat_90d$n_cisf,
             allpartners_dat_90d$sexw_cism,allpartners_dat_90d$cism_sextype,egodat$role,allpartners_dat_90d$n_cism,
             "",allpartners_dat_90d$sexw_transg,allpartners_dat_90d$transg_sextype,allpartners_dat_90d$n_trans,
             allpartners_dat_90d$sexw_anon,allpartners_dat_90d$anon_sextype,allpartners_dat_90d$n_anon,
-            egodat$condoms12m, egodat$condoms_sextype12m, egodat$condoms12m_pos,
-            egodat$sex_high,"",egodat$exchanged_sex,egodat$exch_sextype,"","","","","","","",
+            "", "", "",
+            "","","","","","","",allpartners_dat_90d$sex_with_idu,allpartners_dat_90d$sex_type_with_idu,"","",
             allpartners_dat_90d$sexw_hivpos,allpartners_dat_90d$hivpos_gender,
             allpartners_dat_90d$met_internet)
     
-    sexbehav6mind <- c(
-        allpartners_dat_6m$sexw_cisf,allpartners_dat_6m$cisf_sextype,allpartners_dat_6m$n_cisf,
-        allpartners_dat_6m$sexw_cism,allpartners_dat_6m$cism_sextype,egodat$role,allpartners_dat_6m$n_cism,
-        "",allpartners_dat_6m$sexw_transg,allpartners_dat_6m$transg_sextype,allpartners_dat_6m$n_trans,
-        allpartners_dat_6m$sexw_anon,allpartners_dat_6m$anon_sextype,allpartners_dat_6m$n_anon,
-        egodat$condoms12m, egodat$condoms_sextype12m, egodat$condoms12m_pos,
-        egodat$sex_high,"",egodat$exchanged_sex,egodat$exch_sextype,"","","","","","","",
-        allpartners_dat_6m$sexw_hivpos,allpartners_dat_6m$hivpos_gender,
-        allpartners_dat_6m$met_internet)
+    sexbehav7mind <- c(
+        allpartners_dat_7m$sexw_cisf,allpartners_dat_7m$cisf_sextype,allpartners_dat_7m$n_cisf,
+        allpartners_dat_7m$sexw_cism,allpartners_dat_7m$cism_sextype,egodat$role,allpartners_dat_7m$n_cism,
+        "",allpartners_dat_7m$sexw_transg,allpartners_dat_7m$transg_sextype,allpartners_dat_7m$n_trans,
+        allpartners_dat_7m$sexw_anon,allpartners_dat_7m$anon_sextype,allpartners_dat_7m$n_anon,
+        "", "", "",
+        "","","","","","","",allpartners_dat_7m$sex_with_idu,allpartners_dat_7m$sex_type_with_idu,"","",
+        allpartners_dat_7m$sexw_hivpos,allpartners_dat_7m$hivpos_gender,
+        allpartners_dat_7m$met_internet)
         
     
     # put together the questions and responses for sexual behavior in the past 12 months
@@ -561,8 +609,8 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     sexbehav90days <- data.frame(Questions = sexbehavqs[[2]],
                                  Responses = sexbehav90dind)
     
-    sexbehav6mo <- data.frame(Questions = sexbehavqs[[2]],
-                              Responses = sexbehav6mind)
+    sexbehav7mo <- data.frame(Questions = sexbehavqs[[2]],
+                              Responses = sexbehav7mind)
     
     # Now go through the same process for drug use in the past 12 months
     druguseqs <- list()
@@ -643,7 +691,7 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                    sexbehav12m = sexbehav12m,druguse12m = druguse12m,
                    contact_referral = contact_referral,
                    sexbehav90days = sexbehav90days,
-                   sexbehav6mo = sexbehav6mo)
+                   sexbehav7mo = sexbehav7mo)
     
     return(alldat)
 }
