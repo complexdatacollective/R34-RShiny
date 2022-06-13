@@ -440,11 +440,8 @@ server <- function(input, output) {
 # Run the app 
 shinyApp(ui, server)
 
-#### NOTES:
-# is this going to be hosted on a web server? if yes, need to save this as "app.R"? (or could have ui.R and server.R)
 
 ### TO DO:
-# - add frequency to drug use section
 
 # - handle missing "type" of venue
 

@@ -239,7 +239,12 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                   # variable to answer "Had sex with a person with AIDS or documented HIV infection during the interview period?"
                   # only ask if a partner is known HIV positive, not if their status is unknown, so 
                   # can't split up "No" and "Unknown"
-                  sexw_hivpos = ifelse(sum(HIV_positive & sex_partner,na.rm=TRUE)>=1,"Y - Yes [Y]","No or Unknown"))
+                  sexw_hivpos = ifelse(sum(HIV_positive & sex_partner,na.rm=TRUE)>=1,"Y - Yes [Y]","No or Unknown"),
+                  
+                  #this variable created to answer "Shared injection drug equipment in past 12 months?" on substance use q package
+                  shared_inj = case_when(sum(ego_injection_drug_partner==TRUE, na.rm=TRUE)>=1  ~ 
+                                            "Y - Yes",
+                                        TRUE ~ "N - No"))
                 
     # create subsets of person attribute data for interview periods
     #### need to replace Sys.Date() with date of infection?
@@ -424,14 +429,33 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     venue_summary <- venue_attr %>%
         summarise(any_online = ifelse(sum(type=="app")>0,"Y - Yes","N - No"))
     
+    #removes rows of venues file if venue name is "other" 
+    venue_attr <- venue_attr %>%
+        filter(name!="Other")
+    
     venue_attr <- venue_attr %>%
         mutate(
             
             #recode venue_met, venue_sex, and venue_drugs to their names to be pasted together
-            met <- ifelse(venue_met=="true", "Met", ""),
-            sex <- ifelse(venue_sex=="true", "Sex", ""),
-            drugs <- ifelse(venue_drugs=="true", "Drug/needle-sharing", ""),
+            met = ifelse(venue_met=="true", "Met", ""),
+            sex = ifelse(venue_sex=="true", "Sex", ""),
+            drugs = ifelse(venue_drugs=="true", "Drug/needle-sharing", ""),
+            
+            #other_venue is name if type is missing. if type is present, other_venue is left blank
+            
+            other_venue = case_when(type=="App" | type=="Bar" | type=="Other" | 
+                                        type == "Website" | type=="Park" ~ NA_character_,
+                                    TRUE ~ venue_attr$name),
+            
+            #venue_name is name if type is present. if type is missing, venue_name is "Other"
+            
+            venue_name = case_when(type=="App" | type=="Bar" | type=="Other" |
+                                       type == "Website" | type=="Park"~ venue_attr$name,
+                                   TRUE ~ "Other")
             )
+    
+    
+    
     # concatenate the activities of each venue
     # a nicely formatted string, pasted together with commas
     venue_attr$activity <- apply(cbind(venue_attr$met,venue_attr$sex,venue_attr$drugs),1,
@@ -563,7 +587,7 @@ data_cleaning <- function(indat,interviewperiod = 12) {
                        egodat$drug_specific_heroin,egodat$drug_specific_meth,
                        egodat$drug_specific_nitrate,egodat$drug_specific_erectile_dysfunciton,
                        egodat$drug_specific_marijuana,egodat$drug_specific_other,
-                       egodat$drug_other,egodat$injection_drug_use,"",egodat$drug_use_freq)
+                       egodat$drug_other,egodat$injection_drug_use,allpartners_dat$shared_inj,egodat$drug_use_freq)
     
     druguse12m <- data.frame(Questions = druguseqs[[1]],
                               Responses = druguse12mind)
@@ -603,11 +627,10 @@ data_cleaning <- function(indat,interviewperiod = 12) {
     
     
     #same process for venues
-    #may need to add "Other Venue" question
     
-    venues_qs <- c("Venue Type", "Venue", "Activity")
+    venues_qs <- c("Venue Type", "Venue", "Other venue", "Activity")
     
-    venues_ind <- rbind(venue_attr$type, venue_attr$name, venue_attr$activity)
+    venues_ind <- rbind(venue_attr$type, venue_attr$venue_name, venue_attr$other_venue, venue_attr$activity)
     
     venues <- data.frame(Questions = venues_qs,
                          venues_ind)
