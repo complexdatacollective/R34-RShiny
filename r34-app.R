@@ -88,8 +88,7 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                                                  choices = list("3 months", "7 months", "12 months"))),
                               column(12,
                                      #select interview period start and end dates
-                                     dateInput("date_start", "Interview period start date: "),
-                                     dateInput("date_end", "Interview period end date: ")),
+                                     dateInput("date_start", "Interview period start date: ")),
                               column(12,
                                      # output our datatable w/sexual behaviour in selected interview period
                                      DT::dataTableOutput("sexbehavIP")),
@@ -178,10 +177,9 @@ server <- function(input, output) {
         
         req(input$all_data)
         req(input$date_start)
-        req(input$date_end)
         
         # run our data_cleaning function from the r34_cleaning script
-        return(data_cleaning(input$all_data$datapath, input$date_start, input_date_end))
+        return(data_cleaning(input$all_data$datapath, input$date_start))
         
     }) 
     

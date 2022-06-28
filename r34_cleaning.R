@@ -1,6 +1,6 @@
 
 
-data_cleaning <- function(indat, interviewperiodstart, interviewperiodend) {
+data_cleaning <- function(indat, interviewperiodstart) {
     
     # filenames will have the file names inside of the zipped data file that you've
     # put into "indat" - so all of the various filenames coming from a network canvas
