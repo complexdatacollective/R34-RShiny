@@ -34,7 +34,7 @@ If you have questions, please reach out to Hala Buckhalt (hala.buckhalt@northwes
 
 
 
-## USING THE RSHINY “DATA READER” APP TO READ CLIENT DATA 
+## Using the R Shiny "Data Reader" App to Read Client Data 
 -	Ensure that you have the .zip file, the interview period, and the interview period start date ready. 
 -	Select “Browse” (yellow highlight)
 -	Navigate to where the exported Partner Services interview data is located.
