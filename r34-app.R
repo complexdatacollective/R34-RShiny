@@ -452,27 +452,3 @@ server <- function(input, output) {
 # Run the app 
 shinyApp(ui, server)
 
-
-### TO DO:
-
-# - handle missing "type" of venue
-
-# - check for incorrect/missing data on sex behavior
-#       - 12 m 
-#       - interview period - the following vars are currently pulled from 12m ego data. Need to find data for interview p
-#         -data exists for: Had sex without a condom, type of sex without using a condom, positioning (anal only)
-#         -data currently not captured for: Had sex while intoxicated or high on drugs, Type of Sex while intoxicated or high,
-#           Exchanged drugs/money/goods for sex, type of sex exchanged, transaction type
-
-# - find way to indicate "start" date for interview period. currently using "system date" as placeholder
-
-# - drug use interview period: currently not collecting this data outside of 12 m
-
-# - make the question sections collapsible? and automatically collapse no's 
-#       - errors out even in example code...: (https://www.rdocumentation.org/packages/shinydashboardPlus/versions/0.8.0.9000/topics/accordion)
-#       - might need to be built into the context of a dashboard...: (https://cran.r-project.org/web/packages/bs4Dash/vignettes/extra-elements.html)
-#       - I think the best way to deal with this is to have a set of ifelse's in the data cleaning that collapses
-#         rows based on the responses... it'll be annoying to do but probably the easiest option
-# - deal w/missing data!  I think right now this is very susceptible to NAs - check what happens
-#   if folks don't reply to questions
-
