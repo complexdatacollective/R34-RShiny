@@ -103,10 +103,11 @@ data_cleaning <- function(indat, interviewperiodstart) {
     # recode a bunch of variables that were true/false as TRUE/FALSE to make them easiser to manipulate
     person_attr <- person_attr %>%
         dplyr::mutate_at(vars("sex_partner","race_white","race_black","race_asian","race_hisp",
+                              "race_aian", "race_nhpi", "race_other", "race_uk", "race_refuse",
                            "gender_cis_male","gender_cis_female","gender_trans_male",
                            "gender_trans_female","pregnant_yes","pregnant_no","partner_type_regular",
                            "partner_type_fwb","partner_type_anon","venue_met_internet","venue_met_bar",
-                           "venue_met_bath","condoms_yes","condoms_sometimes","condoms_no","benefit_from_test",
+                           "venue_met_bath","condoms_yes","condoms_sometimes","condoms_no",
                            "bar_specific_1","bar_specific_2","bar_specific_3","bar_specific_4",
                            "bar_specific_5","bar_specific_6","bar_specific_7","internet_specific_1",
                            "internet_specific_2","internet_specific_3","internet_specific_4",
@@ -165,10 +166,10 @@ data_cleaning <- function(indat, interviewperiodstart) {
             white = ifelse(race_white==TRUE,"White",""),
             latinx = ifelse(race_hisp==TRUE,"Hispanic/Latino",""),
             aian = ifelse(race_aian==TRUE, "American Indian Alaskan Native",""),
-            nhpi = ifelse(race_nhpi=TRUE, "Native Hawaiian or Pacific Islander",""),
-            other = ifelse(race_other=TRUE, "Other",""),
-            unknown = ifelse(race_unknown=TRUE, "Unknown",""),
-            refused = ifelse(race_refused=TRUE, "Refused",""),
+            nhpi = ifelse(race_nhpi==TRUE, "Native Hawaiian or Pacific Islander",""),
+            other = ifelse(race_other==TRUE, "Other",""),
+            unknown = ifelse(race_uk==TRUE, "Unknown",""),
+            refused = ifelse(race_refuse==TRUE, "Refused",""),
             
            
             # format the dates of first and last sex
@@ -186,9 +187,9 @@ data_cleaning <- function(indat, interviewperiodstart) {
                                    function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     # concatenate all of the specific race/ethnicity variables together into a nicely
     # formatted string, pasted together with commas
-    person_attr$race <- apply(cbind(person_attr$asian,person_attr$black,person_attr$white,
-                                    person_attr$latinx,person_attr$latinx, person_attr$aian, person_attr$nhpi, 
-                              person_attr$other,person_attr$unknown, person_attr$refused),1,
+    person_attr$race <- apply(cbind(person_attr$black,person_attr$white,
+                                    person_attr$latinx,person_attr$aian,person_attr$nhpi,
+                                    person_attr$other,person_attr$unknown, person_attr$refused),1,
                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
 
     
@@ -526,9 +527,6 @@ data_cleaning <- function(indat, interviewperiodstart) {
     know_edgelist_file <- filenames[grep("edgeList_know.csv",filenames)]
     know_edgelist <- read.csv(unz(indat,know_edgelist_file))
     
-    # Read in and clean edge list of shared needles
-    needles_edgelist_file <- filenames[grep("edgeList_shared_needles.csv",filenames)]
-    needles_edgelist <- read.csv(unz(indat,needles_edgelist_file))
     
     
     # This chunk of code writes out the different CHIMS questions to go into the table
@@ -693,7 +691,7 @@ data_cleaning <- function(indat, interviewperiodstart) {
     # Now make a list of all of those datasets for us to be able to use in the Shiny app
     alldat <- list(egodat = egodat, person_attr = person_attr,
                    venues = venues, sex_edgelist = sex_edgelist,
-                   know_edgelist = know_edgelist, needles_edgelist = needles_edgelist,
+                   know_edgelist = know_edgelist, 
                    sexbehav12m = sexbehav12m,druguse12m = druguse12m,
                    contact_referral = contact_referral,
                    sexbehav90days = sexbehav90days,
