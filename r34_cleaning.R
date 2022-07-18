@@ -161,10 +161,14 @@ data_cleaning <- function(indat, interviewperiodstart) {
             met_internet = ifelse(venue_met_internet==TRUE,"Yes [YES]", "No [NO]"),
             # recode specific race/ethnicity variables to be able to be concatenated
             # below into "race" variable
-            asian = ifelse(race_asian==TRUE, "Asian",""),
             black = ifelse(race_black==TRUE, "Black or African American",""),
             white = ifelse(race_white==TRUE,"White",""),
             latinx = ifelse(race_hisp==TRUE,"Hispanic/Latino",""),
+            aian = ifelse(race_aian==TRUE, "American Indian Alaskan Native",""),
+            nhpi = ifelse(race_nhpi=TRUE, "Native Hawaiian or Pacific Islander",""),
+            other = ifelse(race_other=TRUE, "Other",""),
+            unknown = ifelse(race_unknown=TRUE, "Unknown",""),
+            refused = ifelse(race_refused=TRUE, "Refused",""),
             
            
             # format the dates of first and last sex
@@ -183,7 +187,8 @@ data_cleaning <- function(indat, interviewperiodstart) {
     # concatenate all of the specific race/ethnicity variables together into a nicely
     # formatted string, pasted together with commas
     person_attr$race <- apply(cbind(person_attr$asian,person_attr$black,person_attr$white,
-                                    person_attr$latinx),1,
+                                    person_attr$latinx,person_attr$latinx, person_attr$aian, person_attr$nhpi, 
+                              person_attr$other,person_attr$unknown, person_attr$refused),1,
                               function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
 
     
