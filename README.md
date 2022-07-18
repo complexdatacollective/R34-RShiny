@@ -13,9 +13,9 @@ If you have questions, please reach out to Hala Buckhalt (hala.buckhalt@northwes
     - https://cran.r-project.org/mirrors.html
 2. Download and install RStudio:  
     - https://www.rstudio.com/products/rstudio/download/#download
-3. Download two script files 
-    -	“r34_cleaning.R” 
-    - “r34-app.R”
+3. Download two script files: 
+    - Data Cleaning Script: [r34_cleaning.R](/r34_cleaning.R)
+    - R Shiny App: [r34-app.R](/r34-app.R)
 
 
 
