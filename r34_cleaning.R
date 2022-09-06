@@ -111,7 +111,7 @@ data_cleaning <- function(indat, interviewperiodstart) {
                            "bar_specific_1","bar_specific_2","bar_specific_3","bar_specific_4",
                            "bar_specific_5","bar_specific_6","bar_specific_7","internet_specific_1",
                            "internet_specific_2","internet_specific_3","internet_specific_4",
-                           "internet_specific_5","internet_specific_6","internet_specific_7","ego_injection_drug_partner",
+                           "internet_specific_5","internet_specific_6","internet_specific_7",
                            "HIV_positive","partner_sex_role_bottom","partner_sex_role_top",
                            "partner_sex_role_vers","partner_sex_type_anal",
                            "partner_sex_type_oral","partner_sex_type_vaginal",
