@@ -13,6 +13,10 @@ data_cleaning <- function(indat, interviewperiodstart) {
     egodat <- read.csv(unz(indat,egofile))
     # create some ego variables relevant for sexual behavior in the past year
     
+    #temporarily make logical variables character so that recode function can be used
+    egodat <- egodat%>%
+      mutate_if(is.logical, as.character)
+    
     # recode a bunch of variables that were true/false as TRUE/FALSE to make them easiser to manipulate
     egodat <- egodat %>%
         dplyr::mutate_at(vars("sex_type_exchange_anal", "sex_type_exchange_vaginal", "sex_type_exchange_oral",
@@ -100,7 +104,12 @@ data_cleaning <- function(indat, interviewperiodstart) {
     # read in the person attribute data
     person_attr <- read.csv(unz(indat,person_attr_file))
     
-    # recode a bunch of variables that were true/false as TRUE/FALSE to make them easiser to manipulate
+    
+    #temporarily make logical variables character so that recode function can be used
+    person_attr <- person_attr %>%
+      mutate_if(is.logical, as.character)
+    
+    # recode a bunch of variables that were true/false as TRUE/FALSE to make them easier to manipulate
     person_attr <- person_attr %>%
         dplyr::mutate_at(vars("sex_partner","race_white","race_black","race_asian","race_hisp",
                               "race_aian", "race_nhpi", "race_other", "race_uk", "race_refuse",
@@ -516,17 +525,7 @@ data_cleaning <- function(indat, interviewperiodstart) {
     # a nicely formatted string, pasted together with commas
     venue_attr$activity <- apply(cbind(venue_attr$met,venue_attr$sex,venue_attr$drugs),1,
                                    function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
-    
-    # currently not using the sex_edgelist, know_edgelist, or needles_edgelist to
-    # do anything
-    # Read in and clean the edge list of sex partners
-    sex_edgelist_file <- filenames[grep("edgeList_had_sex.csv",filenames)]
-    sex_edgelist <- read.csv(unz(indat,sex_edgelist_file))
-    
-    # Read in and clean edge list of partners who know one another
-    know_edgelist_file <- filenames[grep("edgeList_know.csv",filenames)]
-    know_edgelist <- read.csv(unz(indat,know_edgelist_file))
-    
+
     
     
     # This chunk of code writes out the different CHIMS questions to go into the table
@@ -690,8 +689,7 @@ data_cleaning <- function(indat, interviewperiodstart) {
     
     # Now make a list of all of those datasets for us to be able to use in the Shiny app
     alldat <- list(egodat = egodat, person_attr = person_attr,
-                   venues = venues, sex_edgelist = sex_edgelist,
-                   know_edgelist = know_edgelist, 
+                   venues = venues,
                    sexbehav12m = sexbehav12m,druguse12m = druguse12m,
                    contact_referral = contact_referral,
                    sexbehav90days = sexbehav90days,
