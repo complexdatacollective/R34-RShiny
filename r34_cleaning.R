@@ -522,16 +522,6 @@ data_cleaning <- function(indat, interviewperiodstart) {
     venue_attr$activity <- apply(cbind(venue_attr$met,venue_attr$sex,venue_attr$drugs),1,
                                    function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
     
-    # currently not using the sex_edgelist, know_edgelist, or needles_edgelist to
-    # do anything
-    # Read in and clean the edge list of sex partners
-    sex_edgelist_file <- filenames[grep("edgeList_had_sex.csv",filenames)]
-    sex_edgelist <- read.csv(unz(indat,sex_edgelist_file))
-    
-    # Read in and clean edge list of partners who know one another
-    know_edgelist_file <- filenames[grep("edgeList_know.csv",filenames)]
-    know_edgelist <- read.csv(unz(indat,know_edgelist_file))
-    
     
     
     # This chunk of code writes out the different CHIMS questions to go into the table
@@ -695,8 +685,6 @@ data_cleaning <- function(indat, interviewperiodstart) {
     
     # Now make a list of all of those datasets for us to be able to use in the Shiny app
     alldat <- list(egodat = egodat, person_attr = person_attr,
-                   venues = venues, sex_edgelist = sex_edgelist,
-                   know_edgelist = know_edgelist, 
                    sexbehav12m = sexbehav12m,druguse12m = druguse12m,
                    contact_referral = contact_referral,
                    sexbehav90days = sexbehav90days,
