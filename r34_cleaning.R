@@ -100,7 +100,12 @@ data_cleaning <- function(indat, interviewperiodstart) {
     # read in the person attribute data
     person_attr <- read.csv(unz(indat,person_attr_file))
     
-    # recode a bunch of variables that were true/false as TRUE/FALSE to make them easiser to manipulate
+    
+    #temporarily make logical variables character so that recode function can be used
+    person_attr <- person_attr %>%
+      mutate_if(is.logical, as.character)
+    
+    # recode a bunch of variables that were true/false as TRUE/FALSE to make them easier to manipulate
     person_attr <- person_attr %>%
         dplyr::mutate_at(vars("sex_partner","race_white","race_black","race_asian","race_hisp",
                               "race_aian", "race_nhpi", "race_other", "race_uk", "race_refuse",
