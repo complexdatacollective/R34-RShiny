@@ -13,6 +13,10 @@ data_cleaning <- function(indat, interviewperiodstart) {
     egodat <- read.csv(unz(indat,egofile))
     # create some ego variables relevant for sexual behavior in the past year
     
+    #temporarily make logical variables character so that recode function can be used
+    egodat <- egodat%>%
+      mutate_if(is.logical, as.character)
+    
     # recode a bunch of variables that were true/false as TRUE/FALSE to make them easiser to manipulate
     egodat <- egodat %>%
         dplyr::mutate_at(vars("sex_type_exchange_anal", "sex_type_exchange_vaginal", "sex_type_exchange_oral",
@@ -521,7 +525,7 @@ data_cleaning <- function(indat, interviewperiodstart) {
     # a nicely formatted string, pasted together with commas
     venue_attr$activity <- apply(cbind(venue_attr$met,venue_attr$sex,venue_attr$drugs),1,
                                    function(x) paste(x[!is.na(x) & x!=""], collapse = ", "))
-    
+
     
     
     # This chunk of code writes out the different CHIMS questions to go into the table
