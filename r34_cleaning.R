@@ -685,6 +685,7 @@ data_cleaning <- function(indat, interviewperiodstart) {
     
     # Now make a list of all of those datasets for us to be able to use in the Shiny app
     alldat <- list(egodat = egodat, person_attr = person_attr,
+                   venues = venues,
                    sexbehav12m = sexbehav12m,druguse12m = druguse12m,
                    contact_referral = contact_referral,
                    sexbehav90days = sexbehav90days,
