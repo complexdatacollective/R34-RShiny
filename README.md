@@ -5,7 +5,7 @@ These instructions will allow you to utilize the R Shiny “Data Reader” App t
 ## About 
 The app was built by the Northwestern University team. It is designed to run locally on Howard Brown computers so that no external data transmission is necessary. The app works by reading in exported Network Canvas files (where every client has a .zip file associated with them) and restructuring it so that it is easier for Partner Services staff members to enter the data into the CHIMS system.  
 
-If you have questions, please reach out to Hala Buckhalt (hala.buckhalt@northwestern.edu) or study MPIs: Michelle Birkett (birkett@northwestern.edu) & Gregory Phillips II (glp2@northwestern.edu)
+If you have questions, please reach out to Caden Buckhalt (buckhalt@northwestern.edu) or study MPIs: Michelle Birkett (birkett@northwestern.edu) & Gregory Phillips II (glp2@northwestern.edu)
 
 ## Required Downloads 
 
