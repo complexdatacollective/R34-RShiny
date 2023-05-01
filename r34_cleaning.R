@@ -539,7 +539,6 @@ data_cleaning <- function(indat, interviewperiodstart) {
     # tried to bold the groups of questions
     refperiod <- c("in past 12 months?", "during the interview period?")
     
-    #Louis Added
     modelvariables_sexbehav90days <- c("SEX_FEMALE_IX_PD",
                                   "SEX_FEMALE_TYPE_IX_PD",
                                   "SEX_FEMALE_NUMBER_PARTNERS_IX_PD",
@@ -605,7 +604,6 @@ data_cleaning <- function(indat, interviewperiodstart) {
                                "SEX_WITH_PERSON_WITH_AIDS_HIV_12_MOS",
                                "SEX_WITH_PERSON_WITH_AIDS_HIV_GENDER_12_MOS",
                                "")
-    #Louis Ended
     
     sexbehavqs <- list()
     for(i in 1:length(refperiod)) {
@@ -692,7 +690,6 @@ data_cleaning <- function(indat, interviewperiodstart) {
     
     
     # Now go through the same process for drug use in the past 12 months
-    #Louis added:
     modelvariables_druguse <- c("DRUGS_12_MOS",
                            "ALCOHOL_12_MOS",
                            "CRACK_12_MOS",
@@ -741,8 +738,7 @@ data_cleaning <- function(indat, interviewperiodstart) {
     # a lot of questions that aren't getting asked at present in Network Canvas - 
     # i think Howard Brown will guide whether there are more sections that should be filled
     # in or not
-    
-    #Louis added
+      
     modelvariables_contact_referral <- c("CONTACT_REFERRAL_BASIS", 
                             "CONTACT_NAME_ALIAS", 
                             "CONTACT_FIRST_NAME",
@@ -818,7 +814,6 @@ data_cleaning <- function(indat, interviewperiodstart) {
  
 
     #same process for venues
-   #Louis Added
     modelvariables_venues <- c("MET_SEX_PARTNERS_VENUE_TYPE", "MET_SEX_PARTNERS_VENUE", "MET_SEX_PARTNERS_VENUE_OTHER_SPECIFY", "MET_SEX_PARTNERS_VENUE_ACTIVITY")
     venues_qs <- c("Venue Type", "Venue", "Other venue", "Activity")
    
