@@ -46,7 +46,10 @@ ui <- navbarPage("Partner Services Network Canvas Data Upload",
                                 # has the text "Next" on it, and has width 200px
                                 actionButton('jumpToVenues','Next',width='200px')
                                 ),
+                         downloadButton("download_data", "Download excel file")
+                         
                               ),
+                     
                            )
   
     
@@ -209,13 +212,14 @@ server <- function(input, output) {
     # data table with all sexual behavior for the past 12 months in it
   output$sexbehav12m <- renderDT({
       req(input$all_data)
-      
-      data <- graph_dat()$sexbehav12m
+#louis changed
+      data <- graph_dat()$sexbehav12m[,c(2,as.numeric(input$Contact)+2)]
       # add a column with a "Copy" button - this is super finnicky and I don't
       # understand how the rclipButton function works - I guess it's outputting
       # HTML for the clip button, and then because we use "escape=FALSE" below
       # that HTML gets rendered into a clip button...
-      data$Copy <- unlist(lapply(data$Responses,
+      names(data)[2] <- "Responses"
+      data$Copy <- unlist(lapply(data[,1],
                                  function(x) {
                                      rclipButton(
                                          # not sure what this does
@@ -252,17 +256,18 @@ server <- function(input, output) {
     #if statement, if choice is 90 days, render 90 days, etc
     
     if (input$IP == "3 months") {
-      data <- graph_dat()$sexbehav90days
+      data <- graph_dat()$sexbehav90days[,c(2,as.numeric(input$Contact)+2)]
     }
+    # Not adding the new here works for some reason?
     if (input$IP == "7 months"){
       data <- graph_dat()$sexbehav7mo
     }
     if (input$IP == "12 months"){
-      data <- graph_dat()$sexbehav12m
+      data <- graph_dat()$sexbehav12m[,c(2,as.numeric(input$Contact)+2)]
     }
-    
+    names(data)[2] <- "Responses"
     # add a column with a "Copy" button
-    data$Copy <- unlist(lapply(data$Responses,
+    data$Copy <- unlist(lapply(data[,1],
                                function(x) {
                                  rclipButton(
                                    # not sure what this does
@@ -295,18 +300,19 @@ server <- function(input, output) {
   # This one is basically identical to the sexbehav12m one but for druguse12m
   output$druguse12m <- renderDT({
       req(input$all_data)
-      
-      data <- graph_dat()$druguse12m
-      data$Copy <- unlist(lapply(data$Responses,
+      #louischanged
+      data <- graph_dat()$druguse12m[,c(2,as.numeric(input$Contact)+2)]
+      names(data)[2] <- "Responses"
+      data$Copy <- unlist(lapply(data[,1],
                                  function(x) {
-                                     rclipButton(
-                                         inputId = "clipbtn",
-                                         label = "Copy",
-                                         clipText = x,
-                                         icon = icon("clipboard")
-                                     ) %>% as.character()
+                                   rclipButton(
+                                     inputId = "clipbtn",
+                                     label = "Copy",
+                                     clipText = x,
+                                     icon = icon("clipboard")
+                                   ) %>% as.character()
                                  }))
-      
+      #louisended
       data <-   DT::datatable(data,
                               options = list(pageLength = 25),
                               class = "cell-border stripe",
@@ -399,9 +405,9 @@ server <- function(input, output) {
       
       # choosing to only display the contact_referral columns 1 ("Responses" column)
       # and as.numeric(input$Contact)+1 which is using the dropdown menu input
-      data <- graph_dat()$contact_referral[,c(1,as.numeric(input$Contact)+1)]
+      data <- graph_dat()$contact_referral[,c(2,as.numeric(input$Contact)+2)]
       names(data)[2] <- "Responses"
-      data$Copy <- unlist(lapply(data[,2],
+      data$Copy <- unlist(lapply(data[,1],
                                  function(x) {
                                      rclipButton(
                                          inputId = "clipbtn",
@@ -426,9 +432,11 @@ server <- function(input, output) {
     
     #choosing to display venues columns 1 ("Responses" column)
     # and as.numeric(input$Venues)+1 which is using the dropdown menu input
-    data <- graph_dat()$venues[,c(1,as.numeric(input$Venues)+1)]
+
+    data <- graph_dat()$venue[, c(2, as.numeric(input$Venues)+2)]
     names(data)[2] <- "Responses"
     data$Copy <- unlist(lapply(data[,2],
+                               
                                function(x) {
                                  rclipButton(
                                    inputId = "clipbtn",
@@ -447,7 +455,23 @@ server <- function(input, output) {
     
     return(data)
   })
-
+  
+  output$download_data <- downloadHandler(
+    filename = paste("compileddata_", Sys.Date(), ".xlsx", sep=""),
+    content = function(file) {
+      wb <- createWorkbook()
+      sheets <- c("Venue", "Sexual Behavior 3 months", "Sexual Behavior 7 months", "Sexual behavior 12 months", "Drug Use 12 Months", "Referral contacts")
+      data <- list(graph_dat()$venue, graph_dat()$sexbehav90days, graph_dat()$sexbehav7mo, graph_dat()$sexbehav12m, graph_dat()$druguse12m, graph_dat()$contact_referral)
+   
+      
+      for (i in 1:length(sheets)) {
+        addWorksheet(wb, sheets[i])
+        writeDataTable(wb, sheets[i], data[[i]])
+      }
+      
+      saveWorkbook(wb, file)
+    }
+  )
 }
 # Run the app 
 shinyApp(ui, server)
