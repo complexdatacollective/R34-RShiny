@@ -5,9 +5,10 @@ if (!require(shiny))  install.packages("shiny")
 if (!require(dplyr)) install.packages("dplyr")
 if(!require(DT)) install.packages("DT")
 if(!require(rclipboard)) install.packages("rclipboard")
+if(!require(openxlsx)) install.packages("openxlsx")
 
 #load libraries
-library(shiny); library(dplyr); library(DT); library(rclipboard)
+library(shiny); library(dplyr); library(DT); library(rclipboard); library(openxlsx)
 
 # source some data cleaning functions
 source("r34_cleaning.R")
