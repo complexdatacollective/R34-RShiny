@@ -463,7 +463,10 @@ server <- function(input, output) {
       wb <- createWorkbook()
       sheets <- c("Venue", "Sexual Behavior 3 months", "Sexual Behavior 7 months", "Sexual behavior 12 months", "Drug Use 12 Months", "Referral contacts")
       data <- list(graph_dat()$venue, graph_dat()$sexbehav90days, graph_dat()$sexbehav7mo, graph_dat()$sexbehav12m, graph_dat()$druguse12m, graph_dat()$contact_referral)
-   
+   # Remove <b> and </b> tags from data frames
+      for (i in seq_along(data)) {
+        data[[i]] <- as.data.frame(lapply(data[[i]], function(x) gsub("<b>|</b>", "", x)))
+      }
       
       for (i in 1:length(sheets)) {
         addWorksheet(wb, sheets[i])
