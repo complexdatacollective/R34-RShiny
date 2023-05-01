@@ -1,23 +1,26 @@
-
-
 data_cleaning <- function(indat, interviewperiodstart) {
-    
-    # filenames will have the file names inside of the zipped data file that you've
+#     indat='/Users/dyl5635/Library/CloudStorage/OneDrive-NorthwesternUniversity/DAA Work Organization 1.0/5. CONNECT Projects/2. R34 Partner Services/DummyData/sample2.zip'
+#    interviewperiodstart= '2023-04-04T14:55:20.764Z'
+    # filenames will have the file names inside of th/Users/dyl5635/Library/CloudStorage/OneDrive-NorthwesternUniversity/DAA Work Organization 1.0/5. CONNECT Projects/2. R34 Partner Services/DummyData/sample2.zipe zipped data file that you've
     # put into "indat" - so all of the various filenames coming from a network canvas
     # interview
+
     filenames <- unzip(indat,list=TRUE)$Name
     # Read in and clean the ego data
     # figure out which one is the "ego" data and save that as egofile
     egofile <- filenames[grep("ego.csv",filenames)]
+    #grep is a function in R used for searching a pattern or a regular expression in a character vector. It returns the index or indices of the elements in the vector that contain the pattern.
+#In the given code grep("ego.csv", filenames) looks for the character string "ego.csv" in the vector of filenames and returns a vector of indices of the elements containing "ego.csv". This is used to identify the file name that contains "ego.csv" in the filenames vector, which is then stored in egofile.
+    
     # read in the csv for that egofile
     egodat <- read.csv(unz(indat,egofile))
     # create some ego variables relevant for sexual behavior in the past year
-    
+  
     #temporarily make logical variables character so that recode function can be used
     egodat <- egodat%>%
       mutate_if(is.logical, as.character)
-    
-    # recode a bunch of variables that were true/false as TRUE/FALSE to make them easiser to manipulate
+  
+    # Regex/ recode a bunch of variables that were true/false as TRUE/FALSE to make them easiser to manipulate
     egodat <- egodat %>%
         dplyr::mutate_at(vars("sex_type_exchange_anal", "sex_type_exchange_vaginal", "sex_type_exchange_oral",
                               "sex_under_influence_anal", "sex_under_influence_oral", "sex_under_influence_vaginal"),
@@ -31,6 +34,7 @@ data_cleaning <- function(indat, interviewperiodstart) {
                     # using the CHIMS categories - uses variables condoms_anal_insertive, 
                     # condoms_anal_receptive, condoms_vaginal, condoms_oral, condoms_oral_receptive
                     # which all apply to the previous year
+          #Corresponds to SEX_MALE_POSITIONING_IX_PD in Mapping
                     condoms12m = case_when(condoms_anal_insertive %in% c("sometimes","no") |
                                                  condoms_anal_receptive %in% c("sometimes","no") |
                                                  condoms_vaginal %in% c("sometimes","no") ~ "Y - Yes, Anal or Vaginal intercourse (with or without oral sex) [YAV]",
@@ -534,6 +538,73 @@ data_cleaning <- function(indat, interviewperiodstart) {
     # the <b> at the start and </b> at the end tell R that we want that string to be bolded 
     # tried to bold the groups of questions
     refperiod <- c("in past 12 months?", "during the interview period?")
+    
+    modelvariables_sexbehav90days <- c("SEX_FEMALE_IX_PD",
+                                  "SEX_FEMALE_TYPE_IX_PD",
+                                  "SEX_FEMALE_NUMBER_PARTNERS_IX_PD",
+                                  "SEX_MALE_IX_PD",
+                                  "SEX_MALE_TYPE_IX_PD",
+                                  "SEX_MALE_POSITIONING_IX_PD",
+                                  "SEX_MALE_NUMBER_PARTNERS_IX_PD",
+                                  "SEX_MALE_HETEROSEXUAL_WITH_BISEXUAL_MALE_IX_PD",
+                                  "SEX_TRANSGENDER_IX_PD",
+                                  "SEX_TRANSGENDER_TYPE_IX_PD",
+                                  "SEX_TRANSGENDER_NUMBER_PARTNERS_IX_PD",
+                                  "SEX_ANONYMOUS_IX_PD",
+                                  "SEX_ANONYMOUS_TYPE_IX_PD",
+                                  "SEX_ANONYMOUS_NUMBER_PARTNERS_IX_PD",
+                                  "SEX_USING_CONDOM_IX_PD",
+                                  "SEX_USING_CONDOM_TYPE_IX_PD",
+                                  "SEX_USING_CONDOM_POSITIONING_IX_PD",
+                                  "SEX_WHILE_INTOXICATED_HIGH_IX_PD",
+                                  "SEX_WHILE_INTOXICATED_HIGH_TYPE_IX_PD",
+                                  "SEX_EXCHANGED_DRUGS_MONEY_IX_PD",
+                                  "SEX_EXCHANGED_DRUGS_MONEY_TYPE_IX_PD",
+                                  "SEX_EXCHANGED_DRUGS_MONEY_RELATIONSHIP_IX_PD",
+                                  "SEX_WITH_MSM_IX_PD",
+                                  "SEX_WITH_MSM_TYPE_IX_PD",
+                                  "SEX_WITH_IDU_IX_PD",
+                                  "SEX_WITH_IDU_TYPE_IX_PD",
+                                  "SEX_WITH_BISEXUAL_PERSON_IX_PD",
+                                  "SEX_WITH_BISEXUAL_PERSON_GENDER_IX_PD",
+                                  "SEX_WITH_PERSON_WITH_AIDS_HIV_IX_PD",
+                                  "SEX_WITH_PERSON_WITH_AIDS_HIV_GENDER_IX_PD",
+                                  ""
+                                  )
+    
+    modelvariables_sexbehav12m <- c(
+                               "SEX_FEMALE_12_MOS",
+                               "SEX_FEMALE_TYPE_IX_PD",
+                               "SEX_FEMALE_NUMBER_PARTNERS_12_MOS",
+                               "SEX_MALE_12_MOS",
+                               "SEX_MALE_TYPE_12_MOS",
+                               "SEX_MALE_POSITIONING_12_MOS",
+                               "SEX_MALE_NUMBER_PARTNERS_12_MOS",
+                               "SEX_MALE_HETEROSEXUAL_WITH_BISEXUAL_MALE_12_MOS",
+                               "SEX_TRANSGENDER_12_MOS",
+                               "SEX_TRANSGENDER_TYPE_12_MOS",
+                               "SEX_TRANSGENDER_NUMBER_PARTNERS_12_MOS",
+                               "SEX_ANONYMOUS_12_MOS",
+                               "SEX_ANONYMOUS_TYPE_12_MOS",
+                               "SEX_ANONYMOUS_NUMBER_PARTNERS_12_MOS",
+                               "SEX_USING_CONDOM_12_MOS",
+                               "SEX_USING_CONDOM_TYPE_12_MOS",
+                               "SEX_USING_CONDOM_POSITIONING_12_MOS",
+                               "SEX_WHILE_INTOXICATED_HIGH_12_MOS",
+                               "SEX_WHILE_INTOXICATED_HIGH_TYPE_12_MOS",
+                               "SEX_EXCHANGED_DRUGS_MONEY_12_MOS",
+                               "SEX_EXCHANGED_DRUGS_MONEY_TYPE_12_MOS",
+                               "SEX_EXCHANGED_DRUGS_MONEY_RELATIONSHIP_12_MOS",
+                               "SEX_WITH_MSM_12_MOS",
+                               "SEX_WITH_MSM_TYPE_12_MOS",
+                               "SEX_WITH_IDU_12_MOS",
+                               "SEX_WITH_IDU_TYPE_12_MOS",
+                               "SEX_WITH_BISEXUAL_PERSON_12_MOS",
+                               "SEX_WITH_BISEXUAL_PERSON_GENDER_12_MOS",
+                               "SEX_WITH_PERSON_WITH_AIDS_HIV_12_MOS",
+                               "SEX_WITH_PERSON_WITH_AIDS_HIV_GENDER_12_MOS",
+                               "")
+    
     sexbehavqs <- list()
     for(i in 1:length(refperiod)) {
         sexbehavqs[[i]] <- c(paste0("<b>Had sex with a female ",refperiod[i],"</b>"),
@@ -605,17 +676,35 @@ data_cleaning <- function(indat, interviewperiodstart) {
         
     
     # put together the questions and responses for sexual behavior in the past 12 months
-    sexbehav12m <- data.frame(Questions = sexbehavqs[[1]],
+    sexbehav12m <- data.frame(modelvariables_sexbehav12m,
+                              Questions = sexbehavqs[[1]],
                               Responses = sexbehav12mind)
     
     # put together the questions and responses for sexual behavior in interview period
-    sexbehav90days <- data.frame(Questions = sexbehavqs[[2]],
+    sexbehav90days <- data.frame(modelvariables_sexbehav90days,
+                                 Questions = sexbehavqs[[2]],
                                  Responses = sexbehav90dind)
     
     sexbehav7mo <- data.frame(Questions = sexbehavqs[[2]],
                               Responses = sexbehav7mind)
     
+    
     # Now go through the same process for drug use in the past 12 months
+    modelvariables_druguse <- c("DRUGS_12_MOS",
+                           "ALCOHOL_12_MOS",
+                           "CRACK_12_MOS",
+                           "COCAINE_12_MOS",
+                           "HEROIN_12_MOS",
+                           "METHAMPHETAMINE_12_MOS",
+                           "NITRATES_POPPERS_12_MOS",
+                           "ED_MEDS_12_MOS",
+                           "MARIJUANA_12_MOS",
+                           "OTHER_DRUGS_12_MOS",
+                           "OTHER_DRUGS_12_MOS_SPECIFY",
+                           "INJECTION_DRUGS_LAST_12_MONTHS",
+                           "INJECTION_DRUGS_LAST_12_MONTHS_SHARED_EQUIPMENT",
+                           "OTHER_DRUGS_12_MOS_FREQUENCY_UNITS"
+                           )
     druguseqs <- list()
     for(i in 1:length(refperiod)) {
         druguseqs[[i]] <- c(paste0("<b>Any alcohol or drug use ",refperiod[i]," (injection or non-injection)</b>"),
@@ -640,7 +729,8 @@ data_cleaning <- function(indat, interviewperiodstart) {
                        egodat$drug_specific_marijuana,egodat$drug_specific_other,
                        egodat$drug_other,egodat$injection_drug_use,allpartners_dat$shared_inj,egodat$drug_use_freq)
     
-    druguse12m <- data.frame(Questions = druguseqs[[1]],
+    druguse12m <- data.frame(modelvariables_druguse,
+                             Questions = druguseqs[[1]],
                               Responses = druguse12mind)
     
     # Now go through the same process for contact referrals
@@ -648,52 +738,142 @@ data_cleaning <- function(indat, interviewperiodstart) {
     # a lot of questions that aren't getting asked at present in Network Canvas - 
     # i think Howard Brown will guide whether there are more sections that should be filled
     # in or not
-    contact_referralqs <- c("Contact's referral basis","Name or alias","Contact's first name",
+      
+    modelvariables_contact_referral <- c("CONTACT_REFERRAL_BASIS", 
+                            "CONTACT_NAME_ALIAS", 
+                            "CONTACT_FIRST_NAME",
+                            "CONTACT_LAST_NAME",
+                            "CONTACT_SPOUSE",
+                            "CONTACT_AGE",
+                            "CONTACT_GENDER",
+                            "CONTACT_PREGNANT",
+                            "CONTACT_PREGNANT_WEEKS",
+                            "CONTACT_MET_VENUE",
+                            "CONTACT_MET_ONLINE",
+                            "CONTACT_LOCATING_INFO_SECTION",
+                            "CONTACT_CELL_PHONE",
+                            "CONTACT_STREET_ADDRESS_1",
+                            "CONTACT_PHYSICAL_ATTRIBUTES_SECTION",
+                            "CONTACT_HEIGHT",
+                            "CONTACT_WEIGHT",
+                            "CONTACT_VISIBLE_IDENTIFIERS_TATTOOS_DESCRIBE",
+                            "CONTACT_HAIR_COLOR_OTHER_DESCRIBE",
+                            "CONTACT_COMPLEXION",
+                            "CONTACT_EXPOSURE_FROM_DATE",
+                            "CONTACT_EXPOSURE_TO_DATE",
+                            "CONTACT_EXPOSURE_FREQUENCY_NUMBER")
+    
+    contact_referralqs <- c("Contact's referral basis", 
+                            "Name or alias", 
+                            "Contact's first name",
                             "Contact's last name",
                             "Is this person the spouse of the original patient?",
-                            "Person's age (years)","Gender","Pregnant","Number of weeks pregnant",
+                            "Person's age (years)",
+                            "Gender",
+                            "Pregnant",
+                            "Number of weeks pregnant",
                             "Venue where OP met/had sex with this person",
                             "Was this partner met through the internet?",
                             "<b>Locating Information</b>",
                             "Phone number","Address",
                             "<b>Physical Attributes</b>",
-                            "Height","Weight","Visible identifiers",
-                            "Hair color","Race",
+                            "Height",
+                            "Weight",
+                            "Visible identifiers",
+                            "Hair color",
+                            "Race",
                             "Exposure date (first)","Exposure date (last)",
                             "Exposure frequency - number")
     
-    contact_referralind <- rbind(person_attr$contact_basis,person_attr$preferred_name,
-                                 person_attr$first_name, person_attr$last_name,
-                                 person_attr$spouse,person_attr$age,person_attr$gender,
-                                 person_attr$pregnant,"",person_attr$venue_all,
-                                 person_attr$met_internet,"",person_attr$phone,
+    contact_referralind <- rbind(person_attr$contact_basis,
+                                 person_attr$preferred_name,
+                                 person_attr$first_name, 
+                                 person_attr$last_name,
+                                 person_attr$spouse,
+                                 person_attr$age,
+                                 person_attr$gender,
+                                 person_attr$pregnant,
+                                 "",
+                                 person_attr$venue_all,
+                                 person_attr$met_internet,
+                                 "",
+                                 person_attr$phone,
                                  person_attr$address,
-                                 "",person_attr$height,person_attr$weight,
-                                 person_attr$descrip_other,person_attr$hair,person_attr$race,
-                                 person_attr$first_sex_formatted,person_attr$last_sex_formatted,
+                                 "",
+                                 person_attr$height,
+                                 person_attr$weight,
+                                 person_attr$descrip_other,
+                                 person_attr$hair,person_attr$race,
+                                 person_attr$first_sex_formatted,
+                                 person_attr$last_sex_formatted,
                                  person_attr$num_times)
     
-    contact_referral <- data.frame(Questions = contact_referralqs,
+    contact_referral <- data.frame(modelvariables_contact_referral,
+                                   Questions = contact_referralqs,
                                    contact_referralind)
-    
-    
+ 
+
     #same process for venues
-    
+    modelvariables_venues <- c("MET_SEX_PARTNERS_VENUE_TYPE", "MET_SEX_PARTNERS_VENUE", "MET_SEX_PARTNERS_VENUE_OTHER_SPECIFY", "MET_SEX_PARTNERS_VENUE_ACTIVITY")
     venues_qs <- c("Venue Type", "Venue", "Other venue", "Activity")
-    
+   
     venues_ind <- rbind(venue_attr$type, venue_attr$venue_name, venue_attr$other_venue, venue_attr$activity)
     
-    venues <- data.frame(Questions = venues_qs,
+    venues <- data.frame(modelvariables_venues,
+                         Questions = venues_qs,
                          venues_ind)
-    
-    
+
     # Now make a list of all of those datasets for us to be able to use in the Shiny app
-    alldat <- list(egodat = egodat, person_attr = person_attr,
+    alldat <- list(egodat = egodat, 
+                   person_attr = person_attr,
                    venues = venues,
-                   sexbehav12m = sexbehav12m,druguse12m = druguse12m,
+                   sexbehav12m = sexbehav12m,
+                   druguse12m = druguse12m,
                    contact_referral = contact_referral,
                    sexbehav90days = sexbehav90days,
                    sexbehav7mo = sexbehav7mo)
-    
     return(alldat)
+
 }
+# 
+# library(openxlsx)
+# 
+# # create a new workbook
+# wb <- createWorkbook()
+# 
+# # add data frames to three different sheets in the workbook
+# addWorksheet(wb, "All Partners Data")
+# writeDataTable(wb, sheet = "All Partners Data", x = allpartners_dat, startRow = 1, startCol = 1, tableStyle = "TableStyleLight9")
+# 
+# addWorksheet(wb, "Ego Data")
+# writeDataTable(wb, sheet = "Ego Data", x = egodat, startRow = 1, startCol = 1, tableStyle = "TableStyleLight9")
+# 
+# addWorksheet(wb, "Person Attributes")
+# writeDataTable(wb, sheet = "Person Attributes", x = person_attr, startRow = 1, startCol = 1, tableStyle = "TableStyleLight9")
+# 
+# # save the workbook
+# saveWorkbook(wb, "/Users/dyl5635/Library/CloudStorage/OneDrive-NorthwesternUniversity/DAA Work Organization 1.0/5. CONNECT Projects/2. R34 Partner Services/DummyData/sample4", overwrite = TRUE)
+# 
+# wb2 <- createWorkbook()
+# 
+# # add data frames to three different sheets in the workbook
+# addWorksheet(wb2, "Venues")
+# writeDataTable(wb2, sheet = "Venues", x = venues, startRow = 1, startCol = 1, tableStyle = "TableStyleLight9")
+# 
+# 
+# addWorksheet(wb2, "Sexual Behavior 3 months")
+# writeDataTable(wb2, sheet = "Sexual Behavior 3 months", x = sexbehav90days, startRow = 1, startCol = 1, tableStyle = "TableStyleLight9")
+# 
+# addWorksheet(wb2, "Sexual Behavior 7 months")
+# writeDataTable(wb2, sheet = "Sexual Behavior 7 months", x = sexbehav7mo, startRow = 1, startCol = 1, tableStyle = "TableStyleLight9")
+# 
+# addWorksheet(wb2, "Sexual Behavior 12 months")
+# writeDataTable(wb2, sheet = "Sexual Behavior 12 months", x = sexbehav90days, startRow = 1, startCol = 1, tableStyle = "TableStyleLight9")
+# 
+# addWorksheet(wb2, "Substance Use within 12 months")
+# writeDataTable(wb2, sheet = "Substance Use within 12 months", x = druguse12m, startRow = 1, startCol = 1, tableStyle = "TableStyleLight9")
+# 
+# addWorksheet(wb2, "Referral Contacts")
+# writeDataTable(wb2, sheet = "Referral Contacts", x = contact_referral, startRow = 1, startCol = 1, tableStyle = "TableStyleLight9")
+# saveWorkbook(wb2, "/Users/dyl5635/Library/CloudStorage/OneDrive-NorthwesternUniversity/DAA Work Organization 1.0/5. CONNECT Projects/2. R34 Partner Services/DummyData/sample4", overwrite = TRUE)
+# 
